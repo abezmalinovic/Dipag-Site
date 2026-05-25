@@ -362,11 +362,11 @@ function renderIngresos(){
 
 function renderAPI(){
   const s = statsData;
-  const costoEstimado = (s.boletas_ocr_mes||0) * 0.015;
+  const costoEstimado = (s.boletas_ocr_mes||0) * 0.01;
   return `
   <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
     <div class="kpi"><div class="kpi-label">Llamadas OCR este mes</div><div class="kpi-val" style="color:var(--blue)">${fmt(s.boletas_ocr_mes)}</div><div class="kpi-sub">a Anthropic Claude</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
-    <div class="kpi"><div class="kpi-label">Costo estimado API</div><div class="kpi-val" style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</div><div class="kpi-sub">$0.015 por llamada aprox.</div><div class="kpi-accent" style="background:var(--orange)"></div></div>
+    <div class="kpi"><div class="kpi-label">Costo estimado API</div><div class="kpi-val" style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</div><div class="kpi-sub">$0.01 por llamada aprox.</div><div class="kpi-accent" style="background:var(--orange)"></div></div>
     <div class="kpi"><div class="kpi-label">Total OCR histórico</div><div class="kpi-val">${fmt(s.total_ocr||s.boletas_ocr_mes)}</div><div class="kpi-sub">desde el inicio</div><div class="kpi-accent" style="background:var(--purple)"></div></div>
   </div>
   <div class="card">
@@ -374,11 +374,11 @@ function renderAPI(){
     <div style="margin-bottom:20px">
       <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Llamadas OCR este mes</span><span style="color:var(--green)">${fmt(s.boletas_ocr_mes)} / ilimitado</span></div>
       <div class="api-meter"><div class="api-fill" style="width:${Math.min(100,(s.boletas_ocr_mes||0)/100*100)}%"></div></div>
-      <div class="api-row"><span>Modelo: claude-sonnet-4-5</span><span>~$0.015 USD/llamada</span></div>
+      <div class="api-row"><span>Modelo: claude-sonnet-4-5</span><span>~$0.01 USD/llamada</span></div>
     </div>
     <div style="background:var(--bg3);border-radius:10px;padding:16px;font-size:13px">
       <div style="font-weight:500;margin-bottom:10px">Costo estimado mensual</div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(s.boletas_ocr_mes)} llamadas × $0.015)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(s.boletas_ocr_mes)} llamadas × $0.01)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
       <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:500">Total estimado</span><span style="color:var(--orange);font-family:'Syne',sans-serif;font-weight:700">~USD ${costoEstimado.toFixed(2)}</span></div>
     </div>
   </div>`;
