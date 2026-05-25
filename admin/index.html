@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIPAG Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0A;--bg2:#111;--bg3:#181818;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--green:#C8FF00;--text:#F0F0F0;--muted:#666;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.glow{position:fixed;top:0;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(200,255,0,0.06) 0%,transparent 70%);pointer-events:none}
+.card{width:100%;max-width:380px;padding:40px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;position:relative;z-index:1}
+.logo-wrap{text-align:center;margin-bottom:32px}
+.logo-wrap img{width:64px;border-radius:16px;margin-bottom:12px}
+.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--green)}
+.logo-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:12px 16px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:rgba(200,255,0,0.4)}
+.btn{width:100%;background:var(--green);color:#0A0A0A;border:none;padding:14px;border-radius:var(--radius);font-family:'Syne',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;transition:all .2s}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.error{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:#FF6B35;margin-top:14px;display:none}
+.error.show{display:block}
+.back{text-align:center;margin-top:20px}
+.back a{color:var(--muted);font-size:13px;text-decoration:none}
+.back a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="card">
+  <div class="logo-wrap">
+    <img src="https://dipag.app/icon-192.png" alt="DIPAG">
+    <div class="logo-name">DIPAG Admin</div>
+    <div class="logo-sub">Panel de administración</div>
+  </div>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="contacto@dipag.cl" autocomplete="email">
+  </div>
+  <div class="field">
+    <label>Contraseña</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <button class="btn" id="login-btn" onclick="doLogin()">Entrar al panel</button>
+  <div class="error" id="error-msg">Email o contraseña incorrectos</div>
+  <div class="back"><a href="https://dipag.cl">← Volver al sitio</a></div>
+</div>
+
+<script>
+// Verificar si ya está logueado
+const adminToken = sessionStorage.getItem('dipag_admin_token');
+if(adminToken) window.location.href = '/admin/dashboard.html';
+
+document.getElementById('password').addEventListener('keydown', e => {
+  if(e.key === 'Enter') doLogin();
+});
+
+async function doLogin(){
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('password').value;
+  const btn   = document.getElementById('login-btn');
+  const err   = document.getElementById('error-msg');
+
+  if(!email || !pass){ err.textContent='Completa todos los campos'; err.classList.add('show'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+  err.classList.remove('show');
+
+  try{
+    const r = await fetch('/api/admin/auth.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password: pass})
+    });
+    const d = await r.json();
+    if(d.success){
+      sessionStorage.setItem('dipag_admin_token', d.token);
+      window.location.href = '/admin/dashboard.html';
+    } else {
+      err.textContent = d.error || 'Acceso denegado';
+      err.classList.add('show');
+    }
+  } catch(e){
+    err.textContent = 'Error de conexión';
+    err.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar al panel';
+  }
+}
+</script>
+</body>
+</html>

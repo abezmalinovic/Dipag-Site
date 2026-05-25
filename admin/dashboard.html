@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — DIPAG Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0A0A;--bg2:#0F0F0F;--bg3:#161616;--card:#131313;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --green:#C8FF00;--orange:#FF6B35;--blue:#50C8FF;--purple:#B464FF;
+  --text:#F0F0F0;--muted:#666;--muted2:#333;--radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50}
+.sb-logo{padding:24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-logo img{width:32px;border-radius:8px}
+.sb-logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--green)}
+.sb-logo-sub{font-size:10px;color:var(--muted)}
+.sb-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.sb-item:hover{background:var(--bg3);color:var(--text)}
+.sb-item.active{background:rgba(200,255,0,0.08);color:var(--green)}
+.sb-item-icon{font-size:16px;width:20px;text-align:center}
+.sb-footer{padding:16px;border-top:1px solid var(--border)}
+.sb-logout{width:100%;background:none;border:1px solid var(--border2);color:var(--muted);padding:9px;border-radius:10px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.sb-logout:hover{border-color:var(--orange);color:var(--orange)}
+
+/* MAIN */
+.main{margin-left:220px;min-height:100vh}
+.topbar{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);position:sticky;top:0;z-index:40}
+.topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.refresh-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.refresh-btn:hover{color:var(--green);border-color:rgba(200,255,0,0.3)}
+.last-update{font-size:11px;color:var(--muted2)}
+.content{padding:28px}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi:hover{border-color:var(--border2)}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px}
+.kpi-val{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;line-height:1;margin-bottom:6px}
+.kpi-sub{font-size:12px;color:var(--muted)}
+.kpi-trend{position:absolute;top:18px;right:16px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:50px}
+.kpi-trend.up{background:rgba(200,255,0,0.1);color:var(--green)}
+.kpi-trend.down{background:rgba(255,107,53,0.1);color:var(--orange)}
+.kpi-accent{position:absolute;bottom:0;left:0;right:0;height:2px}
+
+/* ROW 2 */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.row3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.card-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:50px;background:rgba(255,255,255,0.05);color:var(--muted)}
+
+/* TABLE */
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th{text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:0 0 10px;border-bottom:1px solid var(--border);font-weight:500}
+.table td{padding:12px 0;border-bottom:1px solid var(--border);vertical-align:middle}
+.table tr:last-child td{border-bottom:none}
+.plan-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:.3px}
+.plan-badge.premium{background:rgba(200,255,0,0.12);color:var(--green)}
+.plan-badge.free{background:rgba(255,255,255,0.05);color:var(--muted)}
+
+/* CHART BARS */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:8px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;background:rgba(200,255,0,0.2);transition:all .3s;position:relative;min-height:4px}
+.bar:hover{background:rgba(200,255,0,0.5)}
+.bar-label{font-size:9px;color:var(--muted);white-space:nowrap}
+.bar-val{font-size:9px;color:var(--green);font-weight:600}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:24px}
+.donut{width:100px;height:100px;flex-shrink:0}
+.donut-legends{display:flex;flex-direction:column;gap:10px}
+.donut-leg{display:flex;align-items:center;gap:8px;font-size:13px}
+.donut-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.donut-leg-label{color:var(--muted);font-size:12px}
+.donut-leg-val{font-family:'Syne',sans-serif;font-weight:700;margin-left:auto}
+
+/* INGRESOS */
+.ingreso-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.ingreso-row:last-child{border-bottom:none}
+.ingreso-amount{font-family:'Syne',sans-serif;font-weight:700;color:var(--green)}
+.ingreso-label{color:var(--muted)}
+
+/* API USAGE */
+.api-meter{background:var(--bg3);border-radius:50px;height:6px;margin:8px 0 4px;overflow:hidden}
+.api-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--green),rgba(200,255,0,0.5))}
+.api-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:16px}
+
+/* LOADER */
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.spinner{width:24px;height:24px;border:2px solid var(--bg3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ESTADO */
+.estado-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.estado-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+.estado-dot.offline{background:var(--orange)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <img src="https://dipag.app/icon-192.png" alt="">
+    <div><div class="sb-logo-name">DIPAG</div><div class="sb-logo-sub">Admin Panel</div></div>
+  </div>
+  <nav class="sb-nav">
+    <a class="sb-item active" onclick="showSection('overview')"><span class="sb-item-icon">📊</span>Overview</a>
+    <a class="sb-item" onclick="showSection('usuarios')"><span class="sb-item-icon">👥</span>Usuarios</a>
+    <a class="sb-item" onclick="showSection('boletas')"><span class="sb-item-icon">📄</span>Boletas</a>
+    <a class="sb-item" onclick="showSection('ingresos')"><span class="sb-item-icon">💰</span>Ingresos</a>
+    <a class="sb-item" onclick="showSection('api')"><span class="sb-item-icon">🤖</span>Uso de API</a>
+  </nav>
+  <div class="sb-footer">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;padding:0 2px"><span class="estado-dot online"></span>dipag.app online</div>
+    <button class="sb-logout" onclick="logout()">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="section-title">Overview</div>
+    <div class="topbar-right">
+      <span class="last-update" id="last-update"></span>
+      <button class="refresh-btn" onclick="loadAll()">↻ Actualizar</button>
+    </div>
+  </div>
+  <div class="content" id="main-content">
+    <div class="loading"><div class="spinner"></div>Cargando datos...</div>
+  </div>
+</div>
+
+<script>
+const token = sessionStorage.getItem('dipag_admin_token');
+if(!token) window.location.href = '/admin/';
+
+let statsData = {};
+let currentSection = 'overview';
+
+async function fetchStats(){
+  const r = await fetch('/api/admin/stats.php', {
+    headers:{'Authorization':'Bearer '+token}
+  });
+  if(r.status===401){ logout(); return null; }
+  return await r.json();
+}
+
+async function fetchUsuarios(){
+  const r = await fetch('/api/admin/usuarios.php', {
+    headers:{'Authorization':'Bearer '+token}
+  });
+  return await r.json();
+}
+
+async function loadAll(){
+  document.getElementById('last-update').textContent = 'Actualizando...';
+  try{
+    const [stats, usuarios] = await Promise.all([fetchStats(), fetchUsuarios()]);
+    statsData = {...stats, usuarios_recientes: usuarios?.usuarios || []};
+    renderSection(currentSection);
+    const now = new Date();
+    document.getElementById('last-update').textContent = 'Actualizado '+now.toLocaleTimeString('es-CL');
+  } catch(e){
+    document.getElementById('main-content').innerHTML = '<div class="loading">Error cargando datos. <button onclick="loadAll()" style="color:var(--green);background:none;border:none;cursor:pointer">Reintentar</button></div>';
+  }
+}
+
+function showSection(name){
+  currentSection = name;
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const titles = {overview:'Overview',usuarios:'Usuarios',boletas:'Boletas',ingresos:'Ingresos',api:'Uso de API'};
+  document.getElementById('section-title').textContent = titles[name];
+  renderSection(name);
+}
+
+function renderSection(name){
+  const el = document.getElementById('main-content');
+  if(name==='overview') el.innerHTML = renderOverview();
+  else if(name==='usuarios') el.innerHTML = renderUsuarios();
+  else if(name==='boletas') el.innerHTML = renderBoletas();
+  else if(name==='ingresos') el.innerHTML = renderIngresos();
+  else if(name==='api') el.innerHTML = renderAPI();
+  renderCharts();
+}
+
+function fmt(n){ return Math.round(n||0).toLocaleString('es-CL'); }
+function fmtMoney(n){ return '$'+fmt(n); }
+
+function renderOverview(){
+  const s = statsData;
+  const mrr = (s.premium_activos||0)*1990;
+  return `
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total usuarios</div>
+      <div class="kpi-val" style="color:var(--text)">${fmt(s.total_usuarios)}</div>
+      <div class="kpi-sub">+${fmt(s.nuevos_mes)} este mes</div>
+      <div class="kpi-trend up">↑ ${fmt(s.nuevos_mes)}</div>
+      <div class="kpi-accent" style="background:var(--blue)"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Usuarios premium</div>
+      <div class="kpi-val" style="color:var(--green)">${fmt(s.premium_activos)}</div>
+      <div class="kpi-sub">${fmt(s.total_usuarios - (s.premium_activos||0))} en plan free</div>
+      <div class="kpi-trend up">↑ activos</div>
+      <div class="kpi-accent" style="background:var(--green)"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">MRR</div>
+      <div class="kpi-val" style="color:var(--green)">${fmtMoney(mrr)}</div>
+      <div class="kpi-sub">ingresos mensuales</div>
+      <div class="kpi-trend up">↑ recurrente</div>
+      <div class="kpi-accent" style="background:var(--green)"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Boletas este mes</div>
+      <div class="kpi-val" style="color:var(--blue)">${fmt(s.boletas_mes)}</div>
+      <div class="kpi-sub">${fmt(s.boletas_ocr_mes)} OCR · ${fmt(s.boletas_manual_mes)} manuales</div>
+      <div class="kpi-trend up">↑ activo</div>
+      <div class="kpi-accent" style="background:var(--blue)"></div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Boletas por día <span class="card-badge">últimos 14 días</span></div>
+      <div class="chart-bars" id="chart-boletas"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribución de planes</div>
+      <div class="donut-wrap">
+        <svg class="donut" viewBox="0 0 36 36" id="donut-svg"></svg>
+        <div class="donut-legends">
+          <div class="donut-leg">
+            <div class="donut-dot" style="background:var(--green)"></div>
+            <div>
+              <div>Premium</div>
+              <div class="donut-leg-label">${fmt(s.premium_activos)} usuarios</div>
+            </div>
+            <div class="donut-leg-val" style="color:var(--green)">${s.total_usuarios>0?Math.round((s.premium_activos||0)/s.total_usuarios*100):0}%</div>
+          </div>
+          <div class="donut-leg">
+            <div class="donut-dot" style="background:var(--muted2)"></div>
+            <div>
+              <div>Free</div>
+              <div class="donut-leg-label">${fmt(s.total_usuarios-(s.premium_activos||0))} usuarios</div>
+            </div>
+            <div class="donut-leg-val" style="color:var(--muted)">${s.total_usuarios>0?Math.round((1-(s.premium_activos||0)/s.total_usuarios)*100):100}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row3">
+    <div class="card">
+      <div class="card-title">Usuarios recientes <span class="card-badge">últimos registros</span></div>
+      <table class="table">
+        <thead><tr><th>Usuario</th><th>Plan</th><th>Boletas</th><th>Registro</th></tr></thead>
+        <tbody>
+          ${(statsData.usuarios_recientes||[]).slice(0,8).map(u=>`
+          <tr>
+            <td>${u.nombre||'—'}<br><span style="font-size:11px;color:var(--muted)">${u.email}</span></td>
+            <td><span class="plan-badge ${u.plan}">${u.plan}</span></td>
+            <td style="color:var(--muted)">${u.total_boletas||0}</td>
+            <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Ingresos</div>
+      <div class="ingreso-row"><span class="ingreso-label">MRR</span><span class="ingreso-amount">${fmtMoney(mrr)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">ARR estimado</span><span class="ingreso-amount">${fmtMoney(mrr*12)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Suscriptores</span><span class="ingreso-amount">${fmt(s.premium_activos)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Precio/mes</span><span class="ingreso-amount">$1.990</span></div>
+    </div>
+  </div>`;
+}
+
+function renderUsuarios(){
+  const s = statsData;
+  return `
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi"><div class="kpi-label">Total usuarios</div><div class="kpi-val">${fmt(s.total_usuarios)}</div><div class="kpi-sub">registrados</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
+    <div class="kpi"><div class="kpi-label">Premium activos</div><div class="kpi-val" style="color:var(--green)">${fmt(s.premium_activos)}</div><div class="kpi-sub">con suscripción activa</div><div class="kpi-accent" style="background:var(--green)"></div></div>
+    <div class="kpi"><div class="kpi-label">Nuevos este mes</div><div class="kpi-val" style="color:var(--blue)">${fmt(s.nuevos_mes)}</div><div class="kpi-sub">registros nuevos</div><div class="kpi-accent" style="background:var(--purple)"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Todos los usuarios <span class="card-badge">${fmt(s.total_usuarios)} total</span></div>
+    <table class="table">
+      <thead><tr><th>Nombre</th><th>Email</th><th>Plan</th><th>Boletas</th><th>Grupos</th><th>Registro</th></tr></thead>
+      <tbody>
+        ${(statsData.usuarios_recientes||[]).map(u=>`
+        <tr>
+          <td style="font-weight:500">${u.nombre||'—'}</td>
+          <td style="color:var(--muted);font-size:12px">${u.email}</td>
+          <td><span class="plan-badge ${u.plan}">${u.plan}</span></td>
+          <td style="color:var(--muted)">${u.total_boletas||0}</td>
+          <td style="color:var(--muted)">${u.total_grupos||0}</td>
+          <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderBoletas(){
+  const s = statsData;
+  return `
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total boletas</div><div class="kpi-val">${fmt(s.total_boletas)}</div><div class="kpi-sub">históricas</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
+    <div class="kpi"><div class="kpi-label">Este mes</div><div class="kpi-val" style="color:var(--green)">${fmt(s.boletas_mes)}</div><div class="kpi-sub">boletas creadas</div><div class="kpi-accent" style="background:var(--green)"></div></div>
+    <div class="kpi"><div class="kpi-label">OCR (IA)</div><div class="kpi-val" style="color:var(--blue)">${fmt(s.boletas_ocr_mes)}</div><div class="kpi-sub">escaneadas este mes</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
+    <div class="kpi"><div class="kpi-label">Manuales</div><div class="kpi-val" style="color:var(--muted)">${fmt(s.boletas_manual_mes)}</div><div class="kpi-sub">ingresadas a mano</div><div class="kpi-accent" style="background:var(--muted2)"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Boletas por día <span class="card-badge">últimos 14 días</span></div>
+    <div class="chart-bars" id="chart-boletas" style="height:140px"></div>
+  </div>`;
+}
+
+function renderIngresos(){
+  const s = statsData;
+  const mrr = (s.premium_activos||0)*1990;
+  return `
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi"><div class="kpi-label">MRR</div><div class="kpi-val" style="color:var(--green)">${fmtMoney(mrr)}</div><div class="kpi-sub">ingresos mensuales recurrentes</div><div class="kpi-accent" style="background:var(--green)"></div></div>
+    <div class="kpi"><div class="kpi-label">ARR estimado</div><div class="kpi-val" style="color:var(--green)">${fmtMoney(mrr*12)}</div><div class="kpi-sub">proyección anual</div><div class="kpi-accent" style="background:var(--green)"></div></div>
+    <div class="kpi"><div class="kpi-label">Suscriptores</div><div class="kpi-val">${fmt(s.premium_activos)}</div><div class="kpi-sub">a $1.990/mes c/u</div><div class="kpi-accent" style="background:var(--purple)"></div></div>
+  </div>
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Resumen financiero</div>
+      <div class="ingreso-row"><span class="ingreso-label">MRR actual</span><span class="ingreso-amount">${fmtMoney(mrr)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">ARR proyectado</span><span class="ingreso-amount">${fmtMoney(mrr*12)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Precio por suscriptor</span><span class="ingreso-amount">$1.990</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Suscriptores activos</span><span class="ingreso-amount">${fmt(s.premium_activos)}</span></div>
+      <div class="ingreso-row" style="border-bottom:none"><span class="ingreso-label">Conversión free→premium</span><span class="ingreso-amount">${s.total_usuarios>0?Math.round((s.premium_activos||0)/s.total_usuarios*100):0}%</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pagos Mercado Pago</div>
+      <div style="color:var(--muted);font-size:13px;padding:20px 0;text-align:center">Conecta la API de MP para ver pagos en tiempo real</div>
+    </div>
+  </div>`;
+}
+
+function renderAPI(){
+  const s = statsData;
+  const costoEstimado = (s.boletas_ocr_mes||0) * 0.015;
+  return `
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi"><div class="kpi-label">Llamadas OCR este mes</div><div class="kpi-val" style="color:var(--blue)">${fmt(s.boletas_ocr_mes)}</div><div class="kpi-sub">a Anthropic Claude</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
+    <div class="kpi"><div class="kpi-label">Costo estimado API</div><div class="kpi-val" style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</div><div class="kpi-sub">$0.015 por llamada aprox.</div><div class="kpi-accent" style="background:var(--orange)"></div></div>
+    <div class="kpi"><div class="kpi-label">Total OCR histórico</div><div class="kpi-val">${fmt(s.total_ocr||s.boletas_ocr_mes)}</div><div class="kpi-sub">desde el inicio</div><div class="kpi-accent" style="background:var(--purple)"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Uso de API Anthropic (Claude Sonnet)</div>
+    <div style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Llamadas OCR este mes</span><span style="color:var(--green)">${fmt(s.boletas_ocr_mes)} / ilimitado</span></div>
+      <div class="api-meter"><div class="api-fill" style="width:${Math.min(100,(s.boletas_ocr_mes||0)/100*100)}%"></div></div>
+      <div class="api-row"><span>Modelo: claude-sonnet-4-5</span><span>~$0.015 USD/llamada</span></div>
+    </div>
+    <div style="background:var(--bg3);border-radius:10px;padding:16px;font-size:13px">
+      <div style="font-weight:500;margin-bottom:10px">Costo estimado mensual</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(s.boletas_ocr_mes)} llamadas × $0.015)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:500">Total estimado</span><span style="color:var(--orange);font-family:'Syne',sans-serif;font-weight:700">~USD ${costoEstimado.toFixed(2)}</span></div>
+    </div>
+  </div>`;
+}
+
+function renderCharts(){
+  const chartEl = document.getElementById('chart-boletas');
+  if(!chartEl) return;
+  const dias = statsData.boletas_por_dia || [];
+  if(!dias.length){ chartEl.innerHTML='<div style="color:var(--muted);font-size:12px;padding:20px">Sin datos</div>'; return; }
+  const max = Math.max(...dias.map(d=>d.total||0), 1);
+  chartEl.innerHTML = dias.map(d=>`
+    <div class="bar-wrap">
+      <div class="bar-val">${d.total||0}</div>
+      <div class="bar" style="height:${Math.max(4,((d.total||0)/max)*100)}%"></div>
+      <div class="bar-label">${d.dia||''}</div>
+    </div>`).join('');
+
+  // Donut
+  const donutEl = document.getElementById('donut-svg');
+  if(!donutEl) return;
+  const total = statsData.total_usuarios||1;
+  const prem  = statsData.premium_activos||0;
+  const pct   = prem/total;
+  const r=15.9, circ=2*Math.PI*r;
+  const dash = pct*circ;
+  donutEl.innerHTML=`
+    <circle cx="18" cy="18" r="${r}" fill="none" stroke="#222" stroke-width="3.8"/>
+    <circle cx="18" cy="18" r="${r}" fill="none" stroke="#C8FF00" stroke-width="3.8"
+      stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>`;
+}
+
+function fmtDate(d){
+  if(!d) return '—';
+  return new Date(d).toLocaleDateString('es-CL',{day:'2-digit',month:'short'});
+}
+
+function logout(){
+  sessionStorage.removeItem('dipag_admin_token');
+  window.location.href='/admin/';
+}
+
+// Auto-refresh cada 5 minutos
+loadAll();
+setInterval(loadAll, 5*60*1000);
+</script>
+</body>
+</html>
