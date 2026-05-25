@@ -37,7 +37,7 @@ try {
     $total_usuarios = $db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
     $premium_activos = $db->query("SELECT COUNT(*) FROM usuarios u
         JOIN suscripciones s ON s.usuario_id=u.id
-        WHERE s.estado='activa' AND s.fecha_fin >= NOW()")->fetchColumn();
+        WHERE s.estado='activa' AND s.vencimiento >= CURDATE()")->fetchColumn();
     $nuevos_mes = $db->query("SELECT COUNT(*) FROM usuarios
         WHERE DATE_FORMAT(created_at,'%Y-%m')='$mes_actual'")->fetchColumn();
 
