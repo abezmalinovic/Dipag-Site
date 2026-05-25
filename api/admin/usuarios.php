@@ -42,7 +42,7 @@ try {
             COUNT(DISTINCT g.id) as total_grupos,
             MAX(b.created_at)    as ultima_boleta,
             s.estado             as suscripcion_estado,
-            s.fecha_fin          as suscripcion_vence
+            s.vencimiento        as suscripcion_vence
         FROM usuarios u
         LEFT JOIN boletas b ON b.usuario_id = u.id
         LEFT JOIN grupos g ON g.usuario_id = u.id
