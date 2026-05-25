@@ -123,6 +123,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <a class="sb-item" onclick="showSection('boletas')"><span class="sb-item-icon">📄</span>Boletas</a>
     <a class="sb-item" onclick="showSection('ingresos')"><span class="sb-item-icon">💰</span>Ingresos</a>
     <a class="sb-item" onclick="showSection('api')"><span class="sb-item-icon">🤖</span>Uso de API</a>
+    <a class="sb-item" onclick="showSection('costos')"><span class="sb-item-icon">🧾</span>Costos</a>
   </nav>
   <div class="sb-footer">
     <div style="font-size:11px;color:var(--muted);margin-bottom:8px;padding:0 2px"><span class="estado-dot online"></span>dipag.app online</div>
@@ -183,7 +184,7 @@ function showSection(name){
   currentSection = name;
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
   event.currentTarget.classList.add('active');
-  const titles = {overview:'Overview',usuarios:'Usuarios',boletas:'Boletas',ingresos:'Ingresos',api:'Uso de API'};
+  const titles = {overview:'Overview',usuarios:'Usuarios',boletas:'Boletas',ingresos:'Ingresos',api:'Uso de API',costos:'Costos Operacionales'};
   document.getElementById('section-title').textContent = titles[name];
   renderSection(name);
 }
@@ -195,6 +196,7 @@ function renderSection(name){
   else if(name==='boletas') el.innerHTML = renderBoletas();
   else if(name==='ingresos') el.innerHTML = renderIngresos();
   else if(name==='api') el.innerHTML = renderAPI();
+  else if(name==='costos') el.innerHTML = renderCostos();
   renderCharts();
 }
 
@@ -411,6 +413,188 @@ function renderCharts(){
       stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>`;
 }
 
+function renderCostos(){
+  const s = statsData;
+  const mrr = (s.premium_activos||0)*1990;
+  const costoOCR = (s.boletas_ocr_mes||0) * 0.01 * 950; // USD a CLP aprox
+
+  // Costos fijos mensuales en CLP
+  const COSTOS = [
+    {
+      nombre: 'Servidor VPS',
+      proveedor: 'Hostinger',
+      monto_usd: 13.99,
+      monto_clp: Math.round(13.99 * 950),
+      periodo: 'mensual',
+      vencimiento: '2026-06-22',
+      estado: 'activo',
+      icon: '🖥️'
+    },
+    {
+      nombre: 'Dominio dipag.app',
+      proveedor: 'Spaceship',
+      monto_usd: 4.98,
+      monto_clp: Math.round(4.98 * 950),
+      periodo: 'anual',
+      vencimiento: '2027-05-24',
+      estado: 'activo',
+      icon: '🌐'
+    },
+    {
+      nombre: 'Dominio dipag.cl',
+      proveedor: 'NIC Chile',
+      monto_usd: null,
+      monto_clp: 9990,
+      periodo: 'anual',
+      vencimiento: '2027-05-22',
+      estado: 'activo',
+      icon: '🌐'
+    },
+    {
+      nombre: 'Cloudflare',
+      proveedor: 'Cloudflare',
+      monto_usd: 0,
+      monto_clp: 0,
+      periodo: 'gratis',
+      vencimiento: null,
+      estado: 'gratis',
+      icon: '☁️'
+    },
+    {
+      nombre: 'API Anthropic (OCR)',
+      proveedor: 'Anthropic',
+      monto_usd: null,
+      monto_clp: null,
+      periodo: 'por uso',
+      vencimiento: null,
+      estado: 'variable',
+      icon: '🤖'
+    },
+  ];
+
+  // Costo mensual fijo total (VPS + dominios prorrateados)
+  const vps_clp = Math.round(13.99 * 950);
+  const dipag_app_mes = Math.round((4.98 * 950) / 12);
+  const dipag_cl_mes  = Math.round(9990 / 12);
+  const total_fijo_mes = vps_clp + dipag_app_mes + dipag_cl_mes;
+  const total_variable_mes = Math.round(costoOCR);
+  const total_mes = total_fijo_mes + total_variable_mes;
+  const margen = mrr - total_mes;
+
+  function diasParaVencer(fecha){
+    if(!fecha) return null;
+    const diff = Math.ceil((new Date(fecha) - new Date()) / (1000*60*60*24));
+    return diff;
+  }
+
+  function badgeVencimiento(fecha){
+    if(!fecha) return '';
+    const dias = diasParaVencer(fecha);
+    if(dias <= 30) return `<span style="background:rgba(255,107,53,0.15);color:var(--orange);font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px">⚠️ ${dias}d</span>`;
+    if(dias <= 90) return `<span style="background:rgba(255,200,0,0.1);color:#FFC832;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px">${dias}d</span>`;
+    return `<span style="background:rgba(200,255,0,0.08);color:var(--green);font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px">${dias}d</span>`;
+  }
+
+  return `
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi">
+      <div class="kpi-label">Costo fijo/mes</div>
+      <div class="kpi-val" style="color:var(--orange)">$${fmt(total_fijo_mes)}</div>
+      <div class="kpi-sub">CLP · VPS + dominios</div>
+      <div class="kpi-accent" style="background:var(--orange)"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">API OCR este mes</div>
+      <div class="kpi-val" style="color:var(--orange)">$${fmt(total_variable_mes)}</div>
+      <div class="kpi-sub">CLP · ${s.boletas_ocr_mes||0} escaneos × ~$9,5</div>
+      <div class="kpi-accent" style="background:var(--orange)"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Costo total mes</div>
+      <div class="kpi-val" style="color:var(--orange)">$${fmt(total_mes)}</div>
+      <div class="kpi-sub">CLP · fijo + variable</div>
+      <div class="kpi-accent" style="background:var(--orange)"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Margen neto</div>
+      <div class="kpi-val" style="color:${margen>=0?'var(--green)':'var(--orange)'}">$${fmt(margen)}</div>
+      <div class="kpi-sub">CLP · MRR − costos</div>
+      <div class="kpi-accent" style="background:${margen>=0?'var(--green)':'var(--orange)'}"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">Servicios y renovaciones</div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Servicio</th>
+          <th>Proveedor</th>
+          <th>Costo</th>
+          <th>Período</th>
+          <th>Vencimiento</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${COSTOS.map(c=>{
+          const dias = c.vencimiento ? diasParaVencer(c.vencimiento) : null;
+          const vencStr = c.vencimiento ? new Date(c.vencimiento).toLocaleDateString('es-CL') : '—';
+          const montoStr = c.monto_clp === null ? '~$'+fmt(Math.round((s.boletas_ocr_mes||0)*9.5))+'<span style="color:var(--muted);font-size:11px"> CLP</span>' :
+                           c.monto_clp === 0 ? '<span style="color:var(--green)">Gratis</span>' :
+                           '$'+fmt(c.monto_clp)+'<span style="color:var(--muted);font-size:11px"> CLP</span>'+(c.monto_usd?'<br><span style="color:var(--muted2);font-size:11px">USD '+c.monto_usd+'</span>':'');
+          const estadoBadge = c.estado==='gratis'
+            ? '<span style="background:rgba(200,255,0,0.1);color:var(--green);font-size:10px;padding:3px 8px;border-radius:50px">Gratis</span>'
+            : c.estado==='variable'
+            ? '<span style="background:rgba(80,200,255,0.1);color:var(--blue);font-size:10px;padding:3px 8px;border-radius:50px">Variable</span>'
+            : dias!==null && dias<=30
+            ? '<span style="background:rgba(255,107,53,0.15);color:var(--orange);font-size:10px;padding:3px 8px;border-radius:50px">⚠️ Por vencer</span>'
+            : '<span style="background:rgba(200,255,0,0.1);color:var(--green);font-size:10px;padding:3px 8px;border-radius:50px">✓ Activo</span>';
+          return `<tr>
+            <td>${c.icon} <strong>${c.nombre}</strong></td>
+            <td style="color:var(--muted)">${c.proveedor}</td>
+            <td>${montoStr}</td>
+            <td style="color:var(--muted)">${c.periodo}</td>
+            <td style="color:var(--muted)">${vencStr}${badgeVencimiento(c.vencimiento)}</td>
+            <td>${estadoBadge}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Resumen financiero mensual</div>
+      <div class="ingreso-row"><span class="ingreso-label">MRR (ingresos)</span><span style="color:var(--green);font-family:'Syne',sans-serif;font-weight:700">$${fmt(mrr)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">VPS Hostinger</span><span style="color:var(--orange)">−$${fmt(vps_clp)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">dipag.app (prorrateado)</span><span style="color:var(--orange)">−$${fmt(dipag_app_mes)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">dipag.cl (prorrateado)</span><span style="color:var(--orange)">−$${fmt(dipag_cl_mes)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">API Anthropic OCR</span><span style="color:var(--orange)">−$${fmt(total_variable_mes)}</span></div>
+      <div class="ingreso-row" style="border-top:2px solid var(--border2);margin-top:4px;padding-top:12px;border-bottom:none">
+        <span style="font-family:'Syne',sans-serif;font-weight:700">Margen neto</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:${margen>=0?'var(--green)':'var(--orange)'}">$${fmt(margen)}</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Break-even</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Suscriptores necesarios para cubrir costos fijos</div>
+      <div style="font-size:32px;font-family:'Syne',sans-serif;font-weight:800;color:var(--green);margin-bottom:8px">
+        ${Math.ceil(total_fijo_mes/1990)}
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px">suscriptores premium a $1.990/mes</div>
+      <div class="api-meter">
+        <div class="api-fill" style="width:${Math.min(100,Math.round((s.premium_activos||0)/Math.ceil(total_fijo_mes/1990)*100))}%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px">
+        <span>${s.premium_activos||0} actuales</span>
+        <span>${Math.ceil(total_fijo_mes/1990)} necesarios</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── UTILS ───
 function fmtDate(d){
   if(!d) return '—';
   return new Date(d).toLocaleDateString('es-CL',{day:'2-digit',month:'short'});
