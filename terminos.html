@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos de Uso — DIPAG</title>
+<style>
+@font-face{font-family:'Geist';src:url('/fonts/GeistSans-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+:root{--bg:#0A0A0A;--bg2:#111;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--green:#C8FF00;--text:#F0F0F0;--muted:#888;--muted2:#555;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;line-height:1.7}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:32px;border-radius:8px}
+.nav-back{color:var(--muted);font-size:14px;text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--text)}
+.container{max-width:720px;margin:0 auto;padding:120px 24px 80px}
+.page-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+h1{font-weight:800;font-size:clamp(32px,5vw,48px);line-height:1.1;letter-spacing:-1px;margin-bottom:12px}
+.updated{font-size:13px;color:var(--muted);margin-bottom:48px}
+h2{font-weight:700;font-size:18px;margin:40px 0 12px;color:var(--text)}
+p{color:var(--muted);font-size:15px;margin-bottom:16px}
+ul{color:var(--muted);font-size:15px;margin-bottom:16px;padding-left:20px}
+ul li{margin-bottom:6px}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+.highlight{background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.15);border-radius:10px;padding:16px 20px;margin-bottom:24px}
+.highlight p{color:var(--text);margin:0;font-size:14px}
+footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center}
+footer p{font-size:13px;color:var(--muted2)}
+footer a{color:var(--muted);margin:0 12px}
+footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">
+    <img src="https://dipag.app/icon-192.png" alt="DIPAG">
+  </div>
+  <a href="https://dipag.cl" class="nav-back">← Volver al sitio</a>
+</nav>
+
+<div class="container">
+  <div class="page-label">Legal</div>
+  <h1>Términos de Uso</h1>
+  <p class="updated">Última actualización: mayo 2026 · DIPAG v1.0</p>
+
+  <div class="highlight">
+    <p>Al usar DIPAG aceptas estos términos. Los escribimos de forma simple y directa — sin letra chica innecesaria.</p>
+  </div>
+
+  <h2>1. Uso de la app</h2>
+  <p>DIPAG es una herramienta para dividir cuentas de restaurante entre personas. Puedes usarla de forma gratuita con las funciones del plan Free, o suscribirte al plan Premium para acceder a funciones adicionales.</p>
+  <p>Para usar DIPAG debes tener al menos 13 años de edad. Al registrarte, eres responsable de mantener la seguridad de tu cuenta.</p>
+
+  <h2>2. Procesamiento de imágenes</h2>
+  <p>Cuando subes una foto de boleta para escanear:</p>
+  <ul>
+    <li>La imagen se procesa mediante inteligencia artificial (Anthropic Claude) para extraer los ítems y montos.</li>
+    <li>Las imágenes se envían de forma segura y <strong>no se almacenan permanentemente</strong> en nuestros servidores.</li>
+    <li>Eres responsable de subir imágenes que correspondan a boletas reales de establecimientos de consumo.</li>
+    <li>No debes subir imágenes con información personal sensible de terceros.</li>
+  </ul>
+
+  <h2>3. Responsabilidad</h2>
+  <p>DIPAG es una herramienta de apoyo para el cálculo de divisiones. Los resultados del escaneo con IA pueden contener errores — siempre verifica los montos antes de compartirlos.</p>
+  <p>No somos responsables de:</p>
+  <ul>
+    <li>Errores en el reconocimiento de ítems o precios de boletas.</li>
+    <li>Disputas entre usuarios derivadas del uso de la app.</li>
+    <li>Pérdidas económicas causadas por cálculos incorrectos.</li>
+  </ul>
+
+  <h2>4. Disponibilidad</h2>
+  <p>Hacemos nuestro mejor esfuerzo para mantener DIPAG disponible las 24 horas, pero no garantizamos disponibilidad ininterrumpida. Podemos realizar mantenimientos, actualizaciones o interrupciones sin previo aviso.</p>
+  <p>El servicio se ofrece "tal como está" (as-is), sin garantías de ningún tipo.</p>
+
+  <h2>5. Restricciones de uso</h2>
+  <p>Está prohibido:</p>
+  <ul>
+    <li>Usar DIPAG para actividades ilegales o fraudulentas.</li>
+    <li>Intentar acceder a cuentas de otros usuarios.</li>
+    <li>Hacer scraping, abuso de la API o uso automatizado sin autorización.</li>
+    <li>Subir imágenes con contenido inapropiado, ofensivo o que no sean boletas de consumo.</li>
+    <li>Intentar vulnerar la seguridad del sistema.</li>
+  </ul>
+  <p>Nos reservamos el derecho de suspender cuentas que violen estos términos.</p>
+
+  <h2>6. Propiedad intelectual</h2>
+  <p>Todo el código, diseño, marca y contenido de DIPAG es propiedad de sus creadores. No puedes copiar, redistribuir ni crear productos derivados sin autorización expresa.</p>
+  <p>El nombre DIPAG, el logo y la identidad visual son marca registrada en proceso.</p>
+
+  <h2>7. Plan Premium y pagos</h2>
+  <p>El plan Premium tiene un costo mensual de $1.990 CLP. Puedes cancelar en cualquier momento desde tu perfil — el acceso Premium se mantiene hasta el fin del período pagado. No realizamos reembolsos parciales.</p>
+
+  <h2>8. Cambios futuros</h2>
+  <p>Podemos actualizar estos términos en cualquier momento. Te notificaremos de cambios importantes por email o mediante un aviso en la app. El uso continuo de DIPAG después de los cambios implica aceptación de los nuevos términos.</p>
+
+  <h2>9. Contacto</h2>
+  <p>Para consultas sobre estos términos escríbenos a <a href="mailto:contacto@dipag.cl">contacto@dipag.cl</a>.</p>
+</div>
+
+<footer>
+  <p>
+    <a href="https://dipag.cl">Inicio</a>
+    <a href="/privacidad">Privacidad</a>
+    <a href="/terminos">Términos de Uso</a>
+    <a href="mailto:contacto@dipag.cl">Contacto</a>
+  </p>
+  <p style="margin-top:12px">© 2026 DIPAG v1.0</p>
+</footer>
+</body>
+</html>

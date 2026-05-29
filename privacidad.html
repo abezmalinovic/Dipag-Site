@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad — DIPAG</title>
+<style>
+@font-face{font-family:'Geist';src:url('/fonts/GeistSans-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+:root{--bg:#0A0A0A;--bg2:#111;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--green:#C8FF00;--text:#F0F0F0;--muted:#888;--muted2:#555;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;line-height:1.7}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:32px;border-radius:8px}
+.nav-back{color:var(--muted);font-size:14px;text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--text)}
+.container{max-width:720px;margin:0 auto;padding:120px 24px 80px}
+.page-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+h1{font-weight:800;font-size:clamp(32px,5vw,48px);line-height:1.1;letter-spacing:-1px;margin-bottom:12px}
+.updated{font-size:13px;color:var(--muted);margin-bottom:48px}
+h2{font-weight:700;font-size:18px;margin:40px 0 12px;color:var(--text)}
+p{color:var(--muted);font-size:15px;margin-bottom:16px}
+ul{color:var(--muted);font-size:15px;margin-bottom:16px;padding-left:20px}
+ul li{margin-bottom:6px}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+.highlight{background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.15);border-radius:10px;padding:16px 20px;margin-bottom:24px}
+.highlight p{color:var(--text);margin:0;font-size:14px}
+footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center}
+footer p{font-size:13px;color:var(--muted2)}
+footer a{color:var(--muted);margin:0 12px}
+footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">
+    <img src="https://dipag.app/icon-192.png" alt="DIPAG">
+  </div>
+  <a href="https://dipag.cl" class="nav-back">← Volver al sitio</a>
+</nav>
+
+<div class="container">
+  <div class="page-label">Legal</div>
+  <h1>Política de Privacidad</h1>
+  <p class="updated">Última actualización: mayo 2026 · DIPAG v1.0</p>
+
+  <div class="highlight">
+    <p>Somos un equipo pequeño y creemos en la privacidad simple y honesta. Esta política explica exactamente qué datos recopilamos y para qué los usamos.</p>
+  </div>
+
+  <h2>1. Introducción</h2>
+  <p>DIPAG ("nosotros", "la app") es un servicio para dividir cuentas de restaurante. Al usar dipag.app o dipag.cl, aceptas las prácticas descritas en esta política.</p>
+
+  <h2>2. Información que recopilamos</h2>
+  <p>Recopilamos solo lo necesario para que el servicio funcione:</p>
+  <ul>
+    <li><strong>Cuenta:</strong> nombre, email y foto de perfil obtenidos al iniciar sesión con Google.</li>
+    <li><strong>Boletas escaneadas:</strong> las imágenes que subes para el procesamiento con IA. Se envían directamente a la API de Anthropic (Claude) para extraer los ítems y <strong>no se almacenan en nuestros servidores</strong> después del procesamiento.</li>
+    <li><strong>Historial de cuentas:</strong> los resultados del procesamiento (ítems, montos, comensales) se guardan en tu cuenta si estás registrado.</li>
+    <li><strong>Datos de uso:</strong> información básica sobre cómo usas la app para mejorar el servicio.</li>
+  </ul>
+
+  <h2>3. Procesamiento de imágenes con IA</h2>
+  <p>Cuando escaneas una boleta:</p>
+  <ul>
+    <li>La imagen se envía de forma segura (HTTPS) a la API de <strong>Anthropic Claude</strong> para su análisis.</li>
+    <li>La imagen <strong>no se guarda permanentemente</strong> en nuestros servidores.</li>
+    <li>Anthropic procesa la imagen según su propia <a href="https://www.anthropic.com/privacy" target="_blank">política de privacidad</a>.</li>
+    <li>Solo guardamos el resultado: la lista de ítems detectados y montos.</li>
+  </ul>
+
+  <h2>4. Uso de la información</h2>
+  <p>Usamos tus datos para:</p>
+  <ul>
+    <li>Proveer y mejorar el servicio de división de cuentas.</li>
+    <li>Guardar tu historial de cuentas entre sesiones.</li>
+    <li>Gestionar tu suscripción Premium si aplica.</li>
+    <li>Enviarte comunicaciones relacionadas al servicio (sin spam).</li>
+  </ul>
+  <p>No vendemos, compartimos ni comercializamos tus datos personales con terceros.</p>
+
+  <h2>5. Compartir resultados</h2>
+  <p>Cuando usas la función de links por persona (Premium), se genera un enlace público temporal (válido 7 días) con el resumen de lo que debe pagar esa persona. Ese link no contiene datos personales sensibles — solo el nombre del comensal, los ítems consumidos y el monto total.</p>
+
+  <h2>6. Cookies y almacenamiento local</h2>
+  <p>Usamos <strong>localStorage</strong> en tu navegador para guardar tu sesión y preferencias de uso. No usamos cookies de seguimiento ni publicidad.</p>
+
+  <h2>7. Servicios de terceros</h2>
+  <ul>
+    <li><strong>Cloudflare:</strong> CDN y protección de seguridad. Puede registrar IPs y metadatos de tráfico según su <a href="https://www.cloudflare.com/privacypolicy/" target="_blank">política de privacidad</a>.</li>
+    <li><strong>Anthropic Claude:</strong> procesamiento de imágenes con IA para el escaneo de boletas.</li>
+    <li><strong>Google OAuth:</strong> inicio de sesión con tu cuenta Google.</li>
+  </ul>
+
+  <h2>8. Seguridad</h2>
+  <p>Toda la comunicación entre tu dispositivo y nuestros servidores usa HTTPS. Las contraseñas (en caso de cuentas directas) se almacenan con hash seguro. Hacemos nuestro mejor esfuerzo para proteger tus datos, aunque ningún sistema es 100% infalible.</p>
+
+  <h2>9. Tus derechos</h2>
+  <p>Puedes solicitar en cualquier momento:</p>
+  <ul>
+    <li>Acceso a los datos que tenemos sobre ti.</li>
+    <li>Eliminación de tu cuenta y datos asociados.</li>
+    <li>Corrección de datos incorrectos.</li>
+  </ul>
+
+  <h2>10. Contacto</h2>
+  <p>Para cualquier consulta sobre privacidad escríbenos a <a href="mailto:contacto@dipag.cl">contacto@dipag.cl</a>. Respondemos en menos de 48 horas.</p>
+</div>
+
+<footer>
+  <p>
+    <a href="https://dipag.cl">Inicio</a>
+    <a href="/terminos">Términos de Uso</a>
+    <a href="/privacidad">Privacidad</a>
+    <a href="mailto:contacto@dipag.cl">Contacto</a>
+  </p>
+  <p style="margin-top:12px">© 2026 DIPAG v1.0</p>
+</footer>
+</body>
+</html>
