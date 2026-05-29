@@ -1,7 +1,5 @@
 <?php
 // DIPAG Admin — Listado de usuarios
-// dipag.cl/api/admin/usuarios.php
-
 require_once '../../config/database.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -10,6 +8,9 @@ header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if($_SERVER['REQUEST_METHOD']==='OPTIONS'){http_response_code(200);exit;}
+
+// Emails excluidos del conteo y listado
+define('DEMO_EMAILS', ['demo@dipag.app', 'demo_premium@dipag.app']);
 
 function verificarAdmin($db){
     $auth  = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
@@ -33,7 +34,15 @@ try {
     $offset = (int)($_GET['offset'] ?? 0);
     $plan   = $_GET['plan'] ?? '';
 
-    $where = $plan ? "WHERE u.plan='".($plan==='premium'?'premium':'free')."'" : '';
+    // Excluir demos siempre
+    $demoPlaceholders = implode(',', array_fill(0, count(DEMO_EMAILS), '?'));
+    $whereBase = "WHERE u.email NOT IN ($demoPlaceholders)";
+    $params = DEMO_EMAILS;
+
+    if($plan){
+        $whereBase .= " AND u.plan=?";
+        $params[] = $plan === 'premium' ? 'premium' : 'free';
+    }
 
     $stmt = $db->prepare("
         SELECT
@@ -47,15 +56,17 @@ try {
         LEFT JOIN boletas b ON b.usuario_id = u.id
         LEFT JOIN grupos g ON g.usuario_id = u.id
         LEFT JOIN suscripciones s ON s.usuario_id = u.id AND s.estado='activa'
-        $where
+        $whereBase
         GROUP BY u.id
         ORDER BY u.created_at DESC
         LIMIT ? OFFSET ?
     ");
-    $stmt->execute([$limit, $offset]);
+    $stmt->execute(array_merge($params, [$limit, $offset]));
     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $total = $db->query("SELECT COUNT(*) FROM usuarios $where")->fetchColumn();
+    $totalStmt = $db->prepare("SELECT COUNT(*) FROM usuarios u $whereBase");
+    $totalStmt->execute($params);
+    $total = $totalStmt->fetchColumn();
 
     echo json_encode([
         'success'  => true,

@@ -9,6 +9,11 @@ header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if($_SERVER['REQUEST_METHOD']==='OPTIONS'){http_response_code(200);exit;}
 
+// Emails excluidos del conteo
+define('DEMO_EMAILS', ['demo@dipag.app', 'demo_premium@dipag.app']);
+// Email del owner — no cuenta como ingreso premium
+define('OWNER_EMAIL', 'abezmalinovic@gmail.com');
+
 function verificarAdmin($db){
     $token = str_replace('Bearer ', '', $_SERVER['HTTP_AUTHORIZATION'] ?? '');
     if(!$token) return false;
@@ -22,10 +27,26 @@ try {
     if(!verificarAdmin($db)){ http_response_code(401); echo json_encode(['error'=>'No autorizado']); exit; }
 
     $mes = date('Y-m');
+    $excluidos = array_merge(DEMO_EMAILS, [OWNER_EMAIL]);
+    $placeholders = implode(',', array_fill(0, count($excluidos), '?'));
+    $excl2 = DEMO_EMAILS;
+    $pl2 = implode(',', array_fill(0, count($excl2), '?'));
 
-    $total_usuarios    = $db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
-    $premium_activos   = $db->query("SELECT COUNT(*) FROM usuarios u JOIN suscripciones s ON s.usuario_id=u.id WHERE s.estado='activa' AND s.vencimiento >= CURDATE()")->fetchColumn();
-    $nuevos_mes        = $db->query("SELECT COUNT(*) FROM usuarios WHERE DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
+    // Usuarios reales (sin demos)
+    $stmtU = $db->prepare("SELECT COUNT(*) FROM usuarios WHERE email NOT IN ($pl2)");
+    $stmtU->execute($excl2);
+    $total_usuarios = $stmtU->fetchColumn();
+
+    // Nuevos este mes (sin demos)
+    $stmtN = $db->prepare("SELECT COUNT(*) FROM usuarios WHERE DATE_FORMAT(created_at,'%Y-%m')=? AND email NOT IN ($pl2)");
+    $stmtN->execute(array_merge([$mes], $excl2));
+    $nuevos_mes = $stmtN->fetchColumn();
+
+    // Premium activos que generan ingresos (sin demos ni owner)
+    $stmtP = $db->prepare("SELECT COUNT(*) FROM usuarios u JOIN suscripciones s ON s.usuario_id=u.id WHERE s.estado='activa' AND s.vencimiento >= CURDATE() AND u.email NOT IN ($placeholders)");
+    $stmtP->execute($excluidos);
+    $premium_activos = $stmtP->fetchColumn();
+
     $total_boletas     = $db->query('SELECT COUNT(*) FROM boletas')->fetchColumn();
     $boletas_mes       = $db->query("SELECT COUNT(*) FROM boletas WHERE DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
     $boletas_ocr_mes   = $db->query("SELECT COUNT(*) FROM boletas WHERE origen='ocr' AND DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
