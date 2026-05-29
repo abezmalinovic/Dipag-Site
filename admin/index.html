@@ -3,365 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIPAG — Divide tu cuenta sin dramas</title>
+<title>DIPAG Admin</title>
 <style>
 @font-face{font-family:'Geist';src:url('/fonts/GeistSans-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
 @font-face{font-family:'GeistMono';src:url('/fonts/GeistMono-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
-</style>
-<style>
-:root{
-  --bg:#0A0A0A; --bg2:#111; --bg3:#181818; --card:#141414;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
-  --green:#C8FF00; --orange:#FF6B35;
-  --text:#F0F0F0; --muted:#777; --muted2:#444;
-  --radius:16px; --radius-sm:10px;
-}
+:root{--bg:#0A0A0A;--bg2:#111;--bg3:#181818;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--green:#C8FF00;--text:#F0F0F0;--muted:#666;--radius:14px}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;overflow-x:hidden}
-
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,10,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{display:flex;align-items:center;gap:10px}
-.nav-logo img{height:36px;border-radius:8px}
-.nav-links{display:flex;align-items:center;gap:32px}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--green);color:#0A0A0A;border:none;padding:10px 22px;border-radius:50px;font-family:'Geist',sans-serif;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(200,255,0,0.25)}
-
-/* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
-.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(200,255,0,0.08) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,255,0,0.1);border:1px solid rgba(200,255,0,0.25);color:var(--green);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:500;margin-bottom:28px;letter-spacing:.5px}
-.hero h1{font-family:'Geist',sans-serif;font-weight:800;font-size:clamp(42px,8vw,88px);line-height:1.0;letter-spacing:-2px;margin-bottom:24px;max-width:800px}
-.hero h1 em{color:var(--green);font-style:normal}
-.hero p{color:var(--muted);font-size:clamp(16px,2vw,20px);line-height:1.7;max-width:520px;margin:0 auto 48px;font-weight:300}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.btn-hero{background:var(--green);color:#0A0A0A;border:none;padding:16px 32px;border-radius:50px;font-family:'Geist',sans-serif;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
-.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(200,255,0,0.3)}
-.btn-hero-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);padding:16px 32px;border-radius:50px;font-family:'Geist',sans-serif;font-weight:500;font-size:15px;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
-.btn-hero-ghost:hover{background:var(--bg3);border-color:rgba(255,255,255,0.25)}
-
-/* ── MOCKUP ── */
-.mockup-wrap{max-width:360px;margin:64px auto 0;position:relative}
-.mockup{background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:24px;box-shadow:0 40px 120px rgba(0,0,0,0.6),0 0 0 1px rgba(200,255,0,0.05)}
-.mockup-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.mockup-logo{font-family:'Geist',sans-serif;font-weight:800;font-size:18px;color:var(--green)}
-.mockup-badge{background:rgba(200,255,0,0.12);color:var(--green);font-size:11px;padding:3px 10px;border-radius:50px}
-.mockup-scan{background:var(--bg3);border:2px dashed rgba(200,255,0,0.3);border-radius:16px;padding:32px;text-align:center;margin-bottom:14px}
-.mockup-scan-icon{font-size:36px;margin-bottom:8px}
-.mockup-scan-txt{font-family:'Geist',sans-serif;font-weight:700;font-size:15px;margin-bottom:4px}
-.mockup-scan-sub{color:var(--muted);font-size:12px}
-.mockup-item{display:flex;justify-content:space-between;align-items:center;background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px}
-.mockup-item-price{color:var(--green);font-family:'Geist',sans-serif;font-weight:600}
-.mockup-total{background:var(--green);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-.mockup-total-label{font-family:'Geist',sans-serif;font-weight:700;font-size:12px;color:#0A0A0A;opacity:.7;text-transform:uppercase;letter-spacing:.5px}
-.mockup-total-amount{font-family:'Geist',sans-serif;font-weight:800;font-size:22px;color:#0A0A0A}
-
-/* ── SECCIONES ── */
-section{padding:100px 24px}
-.container{max-width:1100px;margin:0 auto}
-.section-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:16px}
-.section-title{font-family:'Geist',sans-serif;font-weight:800;font-size:clamp(32px,5vw,52px);line-height:1.1;letter-spacing:-1px;margin-bottom:20px}
-.section-sub{color:var(--muted);font-size:16px;line-height:1.7;max-width:500px;font-weight:300}
-
-/* ── PASOS ── */
-.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:56px}
-.step-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;position:relative;transition:border-color .3s}
-.step-card:hover{border-color:rgba(200,255,0,0.2)}
-.step-num{font-family:'Geist',sans-serif;font-weight:800;font-size:64px;color:rgba(200,255,0,0.08);line-height:1;margin-bottom:16px}
-.step-icon{font-size:32px;margin-bottom:14px}
-.step-title{font-family:'Geist',sans-serif;font-weight:700;font-size:18px;margin-bottom:8px}
-.step-desc{color:var(--muted);font-size:14px;line-height:1.7}
-.step-connector{display:none}
-
-/* ── PLANES ── */
-.plans-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:56px;max-width:700px}
-.plan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:all .3s}
-.plan-card.featured{background:var(--green);border-color:var(--green)}
-.plan-name{font-family:'Geist',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;color:var(--muted)}
-.plan-card.featured .plan-name{color:rgba(0,0,0,0.6)}
-.plan-price{font-family:'Geist',sans-serif;font-weight:800;font-size:42px;line-height:1;margin-bottom:4px}
-.plan-card.featured .plan-price{color:#0A0A0A}
-.plan-period{font-size:13px;color:var(--muted);margin-bottom:28px}
-.plan-card.featured .plan-period{color:rgba(0,0,0,0.5)}
-.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
-.plan-features li{font-size:14px;display:flex;align-items:center;gap:8px}
-.plan-card.featured .plan-features li{color:#0A0A0A}
-.plan-features li::before{content:'✓';font-weight:700;color:var(--green);flex-shrink:0}
-.plan-card.featured .plan-features li::before{color:#0A0A0A}
-.plan-features li.no::before{content:'—';color:var(--muted2)}
-.plan-btn{width:100%;padding:14px;border-radius:50px;font-family:'Geist',sans-serif;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:all .2s;border:none}
-.plan-btn-free{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
-.plan-btn-free:hover{border-color:rgba(200,255,0,0.3);color:var(--green)}
-.plan-btn-premium{background:#0A0A0A;color:var(--green)}
-.plan-btn-premium:hover{background:#111;transform:translateY(-1px)}
-
-/* ── FAQ ── */
-.faq-list{margin-top:48px;display:flex;flex-direction:column;gap:12px;max-width:680px}
-.faq-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
-.faq-q{padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:15px;transition:background .2s;user-select:none}
-.faq-q:hover{background:var(--bg3)}
-.faq-arrow{color:var(--muted);transition:transform .3s;font-size:12px}
-.faq-item.open .faq-arrow{transform:rotate(180deg)}
-.faq-a{display:none;padding:0 20px 18px;color:var(--muted);font-size:14px;line-height:1.7}
-.faq-item.open .faq-a{display:block}
-
-/* ── CTA FINAL ── */
-.cta-section{background:linear-gradient(135deg,rgba(200,255,0,0.05) 0%,transparent 60%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;padding:100px 24px}
-.cta-section .section-title{margin:0 auto 16px}
-.cta-section p{color:var(--muted);margin:0 auto 40px;max-width:420px;font-size:16px}
-
-/* ── FOOTER ── */
-footer{padding:40px 32px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
-.footer-logo{font-family:'Geist',sans-serif;font-weight:800;font-size:18px;color:var(--green)}
-.footer-links{display:flex;gap:24px}
-.footer-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s}
-.footer-links a:hover{color:var(--text)}
-.footer-copy{font-size:12px;color:var(--muted2)}
-
-/* ── STATS ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:56px}
-.stat-box{background:var(--card);padding:36px 28px;text-align:center}
-.stat-num{font-family:'Geist',sans-serif;font-weight:800;font-size:42px;color:var(--green);line-height:1;margin-bottom:6px}
-.stat-label{color:var(--muted);font-size:13px}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.hero-badge{animation:fadeUp .5s ease both}
-.hero h1{animation:fadeUp .6s .1s ease both}
-.hero p{animation:fadeUp .6s .2s ease both}
-.hero-btns{animation:fadeUp .6s .3s ease both}
-.mockup-wrap{animation:fadeUp .8s .4s ease both}
-
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.live-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:4px}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  nav{padding:14px 20px}
-  .nav-links{display:none}
-  .plans-wrap{grid-template-columns:1fr}
-  .stats-row{grid-template-columns:1fr}
-  .stat-box{padding:24px}
-  footer{flex-direction:column;gap:20px;text-align:center}
-  .footer-links{flex-wrap:wrap;justify-content:center}
-}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.glow{position:fixed;top:0;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(200,255,0,0.06) 0%,transparent 70%);pointer-events:none}
+.card{width:100%;max-width:380px;padding:40px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;position:relative;z-index:1}
+.logo-wrap{text-align:center;margin-bottom:32px}
+.logo-wrap img{width:64px;border-radius:16px;margin-bottom:12px}
+.logo-name{font-family:'Geist',sans-serif;font-weight:800;font-size:22px;color:var(--green)}
+.logo-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Geist',sans-serif;font-size:15px;padding:12px 16px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:rgba(200,255,0,0.4)}
+.btn{width:100%;background:var(--green);color:#0A0A0A;border:none;padding:14px;border-radius:var(--radius);font-family:'Geist',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;transition:all .2s}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.error{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:#FF6B35;margin-top:14px;display:none}
+.error.show{display:block}
+.back{text-align:center;margin-top:20px}
+.back a{color:var(--muted);font-size:13px;text-decoration:none}
+.back a:hover{color:var(--text)}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">
+<div class="glow"></div>
+<div class="card">
+  <div class="logo-wrap">
     <img src="https://dipag.app/icon-192.png" alt="DIPAG">
+    <div class="logo-name">DIPAG Admin</div>
+    <div class="logo-sub">Panel de administración · v1.0</div>
   </div>
-  <div class="nav-links">
-    <a href="#como-funciona">Cómo funciona</a>
-    <a href="#planes">Planes</a>
-    <a href="#faq">FAQ</a>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="contacto@dipag.cl" autocomplete="email">
   </div>
-  <a href="https://dipag.app" class="nav-cta">Usar la app →</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-badge"><span class="live-dot"></span>Ya disponible en Chile</div>
-  <h1>Divide la <em>cuenta</em><br>sin dramas</h1>
-  <p>Fotografía la boleta, la IA la lee automáticamente. Asigna ítems a cada persona y comparte el resumen por WhatsApp en segundos.</p>
-  <div class="hero-btns">
-    <a href="https://dipag.app" class="btn-hero">📱 Abrir DIPAG <span>→</span></a>
-    <a href="#como-funciona" class="btn-hero-ghost">Ver cómo funciona</a>
+  <div class="field">
+    <label>Contraseña</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
   </div>
-
-  <div class="mockup-wrap">
-    <div class="mockup">
-      <div class="mockup-header">
-        <div class="mockup-logo">DIPAG</div>
-        <div class="mockup-badge">✦ IA</div>
-      </div>
-      <div class="mockup-scan">
-        <div class="mockup-scan-icon">📸</div>
-        <div class="mockup-scan-txt">Boleta escaneada</div>
-        <div class="mockup-scan-sub">18 ítems detectados ✓</div>
-      </div>
-      <div class="mockup-item"><span>Erdinger Weissbier ×2</span><span class="mockup-item-price">$9.800</span></div>
-      <div class="mockup-item"><span>Pizza Bardos</span><span class="mockup-item-price">$15.900</span></div>
-      <div class="mockup-item"><span>Alto del Carmen ×3</span><span class="mockup-item-price">$17.700</span></div>
-      <div class="mockup-total">
-        <div><div class="mockup-total-label">Total + propina</div><div style="font-size:11px;color:rgba(0,0,0,.5)">3 personas</div></div>
-        <div class="mockup-total-amount">$224.070</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- STATS -->
-<section style="padding:0 24px 80px">
-  <div class="container">
-    <div class="stats-row">
-      <div class="stat-box">
-        <div class="stat-num">3s</div>
-        <div class="stat-label">promedio para leer una boleta con IA</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">gratis para empezar, sin tarjeta</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">WhatsApp</div>
-        <div class="stat-label">comparte el resumen directo al chat</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CÓMO FUNCIONA -->
-<section id="como-funciona">
-  <div class="container">
-    <div class="section-label">Cómo funciona</div>
-    <div class="section-title">Listo en 3 pasos</div>
-    <p class="section-sub">Sin instalaciones, sin cuentas bancarias, sin complicaciones.</p>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num">01</div>
-        <div class="step-icon">📸</div>
-        <div class="step-title">Escanea la boleta</div>
-        <div class="step-desc">Toma una foto de la boleta o ingresa los ítems manualmente. La IA de DIPAG los lee y organiza automáticamente.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-num">02</div>
-        <div class="step-icon">👥</div>
-        <div class="step-title">Asigna a cada persona</div>
-        <div class="step-desc">Agrega los comensales y asigna quién consumió qué. DIPAG calcula propina, descuentos y quién le paga a quién.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-num">03</div>
-        <div class="step-icon">💬</div>
-        <div class="step-title">Comparte por WhatsApp</div>
-        <div class="step-desc">Un toque y cada persona recibe su desglose exacto. Sin drama, sin calculadoras, sin peleas.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PLANES -->
-<section id="planes" style="background:var(--bg2)">
-  <div class="container">
-    <div class="section-label">Planes</div>
-    <div class="section-title">Empieza gratis,<br>escala cuando quieras</div>
-    <div class="plans-wrap">
-      <div class="plan-card">
-        <div class="plan-name">Free</div>
-        <div class="plan-price">$0</div>
-        <div class="plan-period">Para siempre gratis</div>
-        <ul class="plan-features">
-          <li>3 escaneos de boleta por mes</li>
-          <li>Ingreso manual ilimitado</li>
-          <li>División entre comensales</li>
-          <li>Quién le paga a quién</li>
-          <li>Compartir por WhatsApp</li>
-          <li>1 PDF gratis</li>
-          <li class="no" style="color:var(--muted2)">Escaneos ilimitados</li>
-          <li class="no" style="color:var(--muted2)">Links compartibles por persona</li>
-          <li class="no" style="color:var(--muted2)">Historial completo</li>
-        </ul>
-        <a href="https://dipag.app" class="plan-btn plan-btn-free">Empezar gratis</a>
-      </div>
-      <div class="plan-card featured">
-        <div class="plan-name">Premium</div>
-        <div class="plan-price">$1.990</div>
-        <div class="plan-period">por mes · cancela cuando quieras</div>
-        <ul class="plan-features">
-          <li>Escaneos ilimitados</li>
-          <li>Historial completo</li>
-          <li>PDF ilimitados</li>
-          <li>Grupos ilimitados</li>
-          <li>Links compartibles por persona</li>
-          <li>Quién le paga a quién</li>
-          <li>3 borradores simultáneos</li>
-          <li>Nuevas funciones primero</li>
-        </ul>
-        <a href="https://dipag.app" class="plan-btn plan-btn-premium">Activar Premium →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq">
-  <div class="container">
-    <div class="section-label">Preguntas frecuentes</div>
-    <div class="section-title">Todo lo que necesitas saber</div>
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">¿Necesito instalar una app? <span class="faq-arrow">▾</span></div>
-        <div class="faq-a">No. DIPAG es una Progressive Web App (PWA) que funciona directo desde tu navegador en el celular. Puedes agregarla a tu pantalla de inicio como cualquier app.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona el escaneo con IA? <span class="faq-arrow">▾</span></div>
-        <div class="faq-a">Usamos Claude de Anthropic para analizar la foto de tu boleta. La IA detecta todos los ítems, cantidades y precios automáticamente, incluso en boletas con letra pequeña o mala iluminación.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">¿Es seguro? ¿Guardan mis datos? <span class="faq-arrow">▾</span></div>
-        <div class="faq-a">Las imágenes de boletas se procesan en el momento y no se almacenan. Tu historial de cuentas se guarda de forma segura asociado a tu cuenta. Nunca vendemos ni compartimos tus datos.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar el plan Premium? <span class="faq-arrow">▾</span></div>
-        <div class="faq-a">Sí, puedes cancelar cuando quieras desde tu perfil en la app. No hay compromisos de permanencia ni cargos ocultos.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">¿Funciona sin crear cuenta? <span class="faq-arrow">▾</span></div>
-        <div class="faq-a">Sí. Puedes usar DIPAG sin cuenta para dividir cuentas manualmente. Para guardar historial, grupos y acceder al escaneo necesitas registrarte — es gratis y toma 30 segundos.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section class="cta-section">
-  <div class="section-label" style="text-align:center">Empieza ahora</div>
-  <div class="section-title" style="text-align:center;margin:0 auto 16px">Sin más peleas<br>por la <em style="color:var(--green);font-style:normal">cuenta</em></div>
-  <p style="color:var(--muted);text-align:center;margin:0 auto 40px;max-width:420px;font-size:16px">3 boletas gratis al mes. Sin tarjeta. Sin instalación.</p>
-  <div style="text-align:center">
-    <a href="https://dipag.app" class="btn-hero">Abrir DIPAG gratis →</a>
-  </div>
-</section>
-
-<!-- CONTACTO -->
-<section id="contacto" style="background:var(--bg2)">
-<div class="container" style="text-align:center;padding:60px 32px">
-  <div class="section-label">Contacto</div>
-  <div class="section-title" style="font-size:clamp(28px,4vw,40px);margin-bottom:16px">¿Dudas o sugerencias?</div>
-  <p style="color:var(--muted);font-size:16px;max-width:480px;margin:0 auto 32px">
-    Escríbenos para consultas, reporte de errores o cualquier feedback. Respondemos rápido.
-  </p>
-  <a href="mailto:contacto@dipag.cl" style="display:inline-flex;align-items:center;gap:10px;background:var(--green);color:#0A0A0A;padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;text-decoration:none">
-    ✉️ contacto@dipag.cl
-  </a>
+  <button class="btn" id="login-btn" onclick="doLogin()">Entrar al panel</button>
+  <div class="error" id="error-msg">Email o contraseña incorrectos</div>
+  <div class="back"><a href="https://dipag.cl">← Volver al sitio</a></div>
 </div>
-</section>
-
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo"><img src="https://dipag.app/icon-192.png" alt="DIPAG" style="height:36px;border-radius:8px"></div>
-  <div class="footer-links">
-    <a href="https://dipag.app">App</a>
-    <a href="#planes">Planes</a>
-    <a href="#faq">FAQ</a>
-    <a href="#contacto">Contacto</a>
-    <a href="/admin">Admin</a>
-  </div>
-  <div class="footer-copy">© 2026 DIPAG</div>
-</footer>
-
 <script>
-function toggleFaq(el){
-  const item=el.parentElement;
-  item.classList.toggle('open');
+const adminToken = sessionStorage.getItem('dipag_admin_token');
+if(adminToken) window.location.href = '/admin/dashboard.html';
+document.getElementById('password').addEventListener('keydown', e => {
+  if(e.key === 'Enter') doLogin();
+});
+async function doLogin(){
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('password').value;
+  const btn   = document.getElementById('login-btn');
+  const err   = document.getElementById('error-msg');
+  if(!email || !pass){ err.textContent='Completa todos los campos'; err.classList.add('show'); return; }
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+  err.classList.remove('show');
+  try{
+    const r = await fetch('/api/admin/auth.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password: pass})
+    });
+    const d = await r.json();
+    if(d.success){
+      sessionStorage.setItem('dipag_admin_token', d.token);
+      window.location.href = '/admin/dashboard.html';
+    } else {
+      err.textContent = d.error || 'Acceso denegado';
+      err.classList.add('show');
+    }
+  } catch(e){
+    err.textContent = 'Error de conexión';
+    err.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar al panel';
+  }
 }
 </script>
 </body>
