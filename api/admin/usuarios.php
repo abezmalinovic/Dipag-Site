@@ -16,7 +16,7 @@ function verificarAdmin($db){
     $auth  = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
     $token = str_replace('Bearer ', '', $auth);
     if(!$token){ return false; }
-    $stmt = $db->prepare('SELECT usuario_id FROM admin_sessions WHERE token=? AND expires_at > NOW() LIMIT 1');
+    $stmt = $db->prepare('SELECT admin_id FROM admin_sessions WHERE token=? AND expires_at > NOW() LIMIT 1');
     $stmt->execute([$token]);
     return $stmt->fetch() !== false;
 }
