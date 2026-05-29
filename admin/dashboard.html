@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — DIPAG Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Geist';src:url('/fonts/GeistSans-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'GeistMono';src:url('/fonts/GeistMono-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+</style>
 <style>
 :root{
   --bg:#0A0A0A;--bg2:#0F0F0F;--bg3:#161616;--card:#131313;
@@ -13,13 +16,13 @@
   --text:#F0F0F0;--muted:#666;--muted2:#333;--radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;min-height:100vh}
 
 /* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50}
 .sb-logo{padding:24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .sb-logo img{width:32px;border-radius:8px}
-.sb-logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--green)}
+.sb-logo-name{font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--green)}
 .sb-logo-sub{font-size:10px;color:var(--muted)}
 .sb-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
 .sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;text-decoration:none;border:none;background:none;width:100%;text-align:left}
@@ -27,15 +30,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .sb-item.active{background:rgba(200,255,0,0.08);color:var(--green)}
 .sb-item-icon{font-size:16px;width:20px;text-align:center}
 .sb-footer{padding:16px;border-top:1px solid var(--border)}
-.sb-logout{width:100%;background:none;border:1px solid var(--border2);color:var(--muted);padding:9px;border-radius:10px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.sb-logout{width:100%;background:none;border:1px solid var(--border2);color:var(--muted);padding:9px;border-radius:10px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Geist',sans-serif}
 .sb-logout:hover{border-color:var(--orange);color:var(--orange)}
 
 /* MAIN */
 .main{margin-left:220px;min-height:100vh}
 .topbar{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);position:sticky;top:0;z-index:40}
-.topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
+.topbar-title{font-family:'Geist',sans-serif;font-weight:700;font-size:18px}
 .topbar-right{display:flex;align-items:center;gap:12px}
-.refresh-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.refresh-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Geist',sans-serif}
 .refresh-btn:hover{color:var(--green);border-color:rgba(200,255,0,0.3)}
 .last-update{font-size:11px;color:var(--muted2)}
 .content{padding:28px}
@@ -45,7 +48,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;position:relative;overflow:hidden;transition:border-color .2s}
 .kpi:hover{border-color:var(--border2)}
 .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px}
-.kpi-val{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;line-height:1;margin-bottom:6px}
+.kpi-val{font-family:'Geist',sans-serif;font-weight:800;font-size:32px;line-height:1;margin-bottom:6px}
 .kpi-sub{font-size:12px;color:var(--muted)}
 .kpi-trend{position:absolute;top:18px;right:16px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:50px}
 .kpi-trend.up{background:rgba(200,255,0,0.1);color:var(--green)}
@@ -58,7 +61,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 /* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
-.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Geist',sans-serif;font-weight:700;font-size:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
 .card-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:50px;background:rgba(255,255,255,0.05);color:var(--muted)}
 
 /* TABLE */
@@ -85,12 +88,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .donut-leg{display:flex;align-items:center;gap:8px;font-size:13px}
 .donut-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .donut-leg-label{color:var(--muted);font-size:12px}
-.donut-leg-val{font-family:'Syne',sans-serif;font-weight:700;margin-left:auto}
+.donut-leg-val{font-family:'Geist',sans-serif;font-weight:700;margin-left:auto}
 
 /* INGRESOS */
 .ingreso-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
 .ingreso-row:last-child{border-bottom:none}
-.ingreso-amount{font-family:'Syne',sans-serif;font-weight:700;color:var(--green)}
+.ingreso-amount{font-family:'Geist',sans-serif;font-weight:700;color:var(--green)}
 .ingreso-label{color:var(--muted)}
 
 /* API USAGE */
@@ -381,7 +384,7 @@ function renderAPI(){
     <div style="background:var(--bg3);border-radius:10px;padding:16px;font-size:13px">
       <div style="font-weight:500;margin-bottom:10px">Costo estimado mensual</div>
       <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(s.boletas_ocr_mes)} llamadas × $0.01)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
-      <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:500">Total estimado</span><span style="color:var(--orange);font-family:'Syne',sans-serif;font-weight:700">~USD ${costoEstimado.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:500">Total estimado</span><span style="color:var(--orange);font-family:'Geist',sans-serif;font-weight:700">~USD ${costoEstimado.toFixed(2)}</span></div>
     </div>
   </div>`;
 }
@@ -566,20 +569,20 @@ function renderCostos(){
   <div class="row2">
     <div class="card">
       <div class="card-title">Resumen financiero mensual</div>
-      <div class="ingreso-row"><span class="ingreso-label">MRR (ingresos)</span><span style="color:var(--green);font-family:'Syne',sans-serif;font-weight:700">$${fmt(mrr)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">MRR (ingresos)</span><span style="color:var(--green);font-family:'Geist',sans-serif;font-weight:700">$${fmt(mrr)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">VPS Hostinger</span><span style="color:var(--orange)">−$${fmt(vps_clp)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">dipag.app (prorrateado)</span><span style="color:var(--orange)">−$${fmt(dipag_app_mes)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">dipag.cl (prorrateado)</span><span style="color:var(--orange)">−$${fmt(dipag_cl_mes)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">API Anthropic OCR</span><span style="color:var(--orange)">−$${fmt(total_variable_mes)}</span></div>
       <div class="ingreso-row" style="border-top:2px solid var(--border2);margin-top:4px;padding-top:12px;border-bottom:none">
-        <span style="font-family:'Syne',sans-serif;font-weight:700">Margen neto</span>
-        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:${margen>=0?'var(--green)':'var(--orange)'}">$${fmt(margen)}</span>
+        <span style="font-family:'Geist',sans-serif;font-weight:700">Margen neto</span>
+        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:20px;color:${margen>=0?'var(--green)':'var(--orange)'}">$${fmt(margen)}</span>
       </div>
     </div>
     <div class="card">
       <div class="card-title">Break-even</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Suscriptores necesarios para cubrir costos fijos</div>
-      <div style="font-size:32px;font-family:'Syne',sans-serif;font-weight:800;color:var(--green);margin-bottom:8px">
+      <div style="font-size:32px;font-family:'Geist',sans-serif;font-weight:800;color:var(--green);margin-bottom:8px">
         ${Math.ceil(total_fijo_mes/1990)}
       </div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px">suscriptores premium a $1.990/mes</div>
