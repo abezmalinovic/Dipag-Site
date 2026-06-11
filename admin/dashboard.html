@@ -74,8 +74,8 @@ body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;min-h
 .plan-badge.free{background:rgba(255,255,255,0.05);color:var(--muted)}
 
 /* CHART BARS */
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:8px}
-.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:8px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
 .bar{width:100%;border-radius:4px 4px 0 0;background:rgba(200,255,0,0.2);transition:all .3s;position:relative;min-height:4px}
 .bar:hover{background:rgba(200,255,0,0.5)}
 .bar-label{font-size:9px;color:var(--muted);white-space:nowrap}
@@ -482,16 +482,6 @@ function renderCostos(){
       vencimiento: null,
       estado: 'variable',
       icon: '🤖'
-    },
-    {
-      nombre: 'Testers Google Play (Fiverr)',
-      proveedor: 'Fiverr / Umer Mehboob',
-      monto_usd: 20.72,
-      monto_clp: Math.round(20.72 * 950),
-      periodo: 'único',
-      vencimiento: null,
-      estado: 'unico',
-      icon: '🧪'
     },
   ];
 
