@@ -49,9 +49,9 @@ try {
 
     $total_boletas     = $db->query('SELECT COUNT(*) FROM boletas')->fetchColumn();
     $boletas_mes       = $db->query("SELECT COUNT(*) FROM boletas WHERE DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
-    $boletas_ocr_mes   = $db->query("SELECT COUNT(*) FROM boletas WHERE origen='ocr' AND DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
+    $boletas_ocr_mes   = $db->query("SELECT COUNT(*) FROM boletas WHERE origen='scan' AND DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
     $boletas_manual_mes= $db->query("SELECT COUNT(*) FROM boletas WHERE origen='manual' AND DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
-    $total_ocr         = $db->query("SELECT COUNT(*) FROM boletas WHERE origen='ocr'")->fetchColumn();
+    $total_ocr         = $db->query("SELECT COUNT(*) FROM boletas WHERE origen='scan'")->fetchColumn();
     $completadas_mes   = $db->query("SELECT COUNT(*) FROM boletas WHERE estado='completada' AND DATE_FORMAT(created_at,'%Y-%m')='$mes'")->fetchColumn();
 
     $dias = $db->query("SELECT DATE_FORMAT(created_at,'%d/%m') as dia, COUNT(*) as total
