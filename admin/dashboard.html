@@ -464,6 +464,16 @@ function renderCostos(){
       icon: '☁️'
     },
     {
+      nombre: 'Google Play Developer',
+      proveedor: 'Google',
+      monto_usd: 25,
+      monto_clp: Math.round(25 * 950),
+      periodo: 'único',
+      vencimiento: null,
+      estado: 'unico',
+      icon: '📱'
+    },
+    {
       nombre: 'API Anthropic (OCR)',
       proveedor: 'Anthropic',
       monto_usd: null,
@@ -479,7 +489,8 @@ function renderCostos(){
   const vps_clp = Math.round(13.99 * 950);
   const dipag_app_mes = Math.round((4.98 * 950) / 12);
   const dipag_cl_mes  = Math.round(9990 / 12);
-  const total_fijo_mes = vps_clp + dipag_app_mes + dipag_cl_mes;
+  const google_play_mes = Math.round((25 * 950) / 12); // USD 25 pago único amortizado 12 meses
+  const total_fijo_mes = vps_clp + dipag_app_mes + dipag_cl_mes + google_play_mes;
   const total_variable_mes = Math.round(costoOCR);
   const total_mes = total_fijo_mes + total_variable_mes;
   const margen = mrr - total_mes;
@@ -550,6 +561,8 @@ function renderCostos(){
             ? '<span style="background:rgba(200,255,0,0.1);color:var(--green);font-size:10px;padding:3px 8px;border-radius:50px">Gratis</span>'
             : c.estado==='variable'
             ? '<span style="background:rgba(80,200,255,0.1);color:var(--blue);font-size:10px;padding:3px 8px;border-radius:50px">Variable</span>'
+            : c.estado==='unico'
+            ? '<span style="background:rgba(180,100,255,0.15);color:var(--purple);font-size:10px;padding:3px 8px;border-radius:50px">Único</span>'
             : dias!==null && dias<=30
             ? '<span style="background:rgba(255,107,53,0.15);color:var(--orange);font-size:10px;padding:3px 8px;border-radius:50px">⚠️ Por vencer</span>'
             : '<span style="background:rgba(200,255,0,0.1);color:var(--green);font-size:10px;padding:3px 8px;border-radius:50px">✓ Activo</span>';
@@ -573,6 +586,7 @@ function renderCostos(){
       <div class="ingreso-row"><span class="ingreso-label">VPS Hostinger</span><span style="color:var(--orange)">−$${fmt(vps_clp)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">dipag.app (prorrateado)</span><span style="color:var(--orange)">−$${fmt(dipag_app_mes)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">dipag.cl (prorrateado)</span><span style="color:var(--orange)">−$${fmt(dipag_cl_mes)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Google Play (amortizado)</span><span style="color:var(--orange)">−$${fmt(google_play_mes)}</span></div>
       <div class="ingreso-row"><span class="ingreso-label">API Anthropic OCR</span><span style="color:var(--orange)">−$${fmt(total_variable_mes)}</span></div>
       <div class="ingreso-row" style="border-top:2px solid var(--border2);margin-top:4px;padding-top:12px;border-bottom:none">
         <span style="font-family:'Geist',sans-serif;font-weight:700">Margen neto</span>
