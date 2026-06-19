@@ -619,6 +619,47 @@ function renderCostos(){
         <span>${Math.ceil(total_fijo_mes/1990)} necesarios</span>
       </div>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Historial de pagos <span class="card-badge">registro acumulado</span></div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Servicio</th>
+          <th>Proveedor</th>
+          <th>Invoice</th>
+          <th>USD</th>
+          <th>CLP</th>
+          <th>Período cubierto</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${[
+          { fecha:'2026-05-09', servicio:'Google Play Developer', proveedor:'Google',    invoice:'—',             usd:25.00, clp:Math.round(25*950),    periodo:'Único (registro)' },
+          { fecha:'2026-05-21', servicio:'Servidor VPS',          proveedor:'Hostinger', invoice:'—',             usd:13.99, clp:Math.round(13.99*950), periodo:'May 2026 – Jun 2026' },
+          { fecha:'2026-05-21', servicio:'Dominio dipag.cl',      proveedor:'NIC Chile', invoice:'—',             usd:null,  clp:9990,                  periodo:'May 2026 – May 2027' },
+          { fecha:'2026-05-23', servicio:'Dominio dipag.app',     proveedor:'Spaceship', invoice:'—',             usd:4.98,  clp:Math.round(4.98*950),  periodo:'May 2026 – May 2027' },
+          { fecha:'2026-06-11', servicio:'Testers Google Play',   proveedor:'Fiverr',    invoice:'FO629C79090C6', usd:20.72, clp:Math.round(20.72*950), periodo:'Jun 2026 (único)' },
+          { fecha:'2026-06-19', servicio:'Servidor VPS',          proveedor:'Hostinger', invoice:'H_45417194',    usd:24.49, clp:Math.round(24.49*950), periodo:'Jun 2026 – Jul 2026' },
+        ].map(p=>`<tr>
+          <td style="color:var(--muted);font-size:12px">${new Date(p.fecha).toLocaleDateString('es-CL')}</td>
+          <td><strong>${p.servicio}</strong></td>
+          <td style="color:var(--muted)">${p.proveedor}</td>
+          <td style="color:var(--muted2);font-size:11px;font-family:monospace">${p.invoice}</td>
+          <td style="color:var(--muted)">${p.usd ? 'USD '+p.usd.toFixed(2) : '—'}</td>
+          <td style="color:var(--orange);font-family:'Geist',sans-serif;font-weight:600">$${fmt(p.clp)}</td>
+          <td style="color:var(--muted);font-size:12px">${p.periodo}</td>
+        </tr>`).join('')}
+        <tr style="border-top:2px solid var(--border2)">
+          <td colspan="4" style="font-family:'Geist',sans-serif;font-weight:700;padding-top:14px">TOTAL ACUMULADO</td>
+          <td style="color:var(--orange);font-family:'Geist',sans-serif;font-weight:700;padding-top:14px">USD ${(25+13.99+4.98+20.72+24.49).toFixed(2)}</td>
+          <td style="color:var(--orange);font-family:'Geist',sans-serif;font-weight:800;font-size:16px;padding-top:14px">$${fmt(Math.round(25*950)+Math.round(13.99*950)+9990+Math.round(4.98*950)+Math.round(20.72*950)+Math.round(24.49*950))}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
   </div>`;
 }
 
