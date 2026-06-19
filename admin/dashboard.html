@@ -426,10 +426,10 @@ function renderCostos(){
     {
       nombre: 'Servidor VPS',
       proveedor: 'Hostinger',
-      monto_usd: 13.99,
-      monto_clp: Math.round(13.99 * 950),
+      monto_usd: 24.49,
+      monto_clp: Math.round(24.49 * 950),
       periodo: 'mensual',
-      vencimiento: '2026-06-22',
+      vencimiento: '2026-07-21',
       estado: 'activo',
       icon: '🖥️'
     },
@@ -486,7 +486,7 @@ function renderCostos(){
   ];
 
   // Costo mensual fijo total (VPS + dominios prorrateados)
-  const vps_clp = Math.round(13.99 * 950);
+  const vps_clp = Math.round(24.49 * 950);
   const dipag_app_mes = Math.round((4.98 * 950) / 12);
   const dipag_cl_mes  = Math.round(9990 / 12);
   const google_play_mes = Math.round((25 * 950) / 12); // USD 25 pago único amortizado 12 meses
