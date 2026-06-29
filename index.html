@@ -121,6 +121,14 @@ footer{padding:40px 32px;display:flex;align-items:center;justify-content:space-b
 .footer-links a:hover{color:var(--text)}
 .footer-copy{font-size:12px;color:var(--muted2)}
 
+/* ── GOOGLE PLAY BADGE ── */
+.gplay-badge{display:inline-flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:50px;padding:10px 20px;text-decoration:none;transition:all .2s;margin-top:20px}
+.gplay-badge:hover{border-color:rgba(200,255,0,0.3);background:var(--card);transform:translateY(-1px)}
+.gplay-badge svg{flex-shrink:0}
+.gplay-badge-text{display:flex;flex-direction:column;line-height:1.2}
+.gplay-badge-sub{font-size:10px;color:var(--muted);letter-spacing:.3px}
+.gplay-badge-name{font-size:14px;font-weight:700;color:var(--text)}
+
 /* ── STATS ── */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:56px}
 .stat-box{background:var(--card);padding:36px 28px;text-align:center}
@@ -175,6 +183,18 @@ footer{padding:40px 32px;display:flex;align-items:center;justify-content:space-b
     <a href="https://dipag.app" class="btn-hero">📱 Abrir DIPAG <span>→</span></a>
     <a href="#como-funciona" class="btn-hero-ghost">Ver cómo funciona</a>
   </div>
+  <a href="https://play.google.com/store/apps/details?id=cl.dipag.dipag" class="gplay-badge" target="_blank" rel="noopener">
+    <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.22 0.5C0.89 0.68 0.67 1.03 0.67 1.45V20.55C0.67 20.97 0.89 21.32 1.22 21.5L1.31 21.56L11.44 11.43V11.22V11L1.31 0.44L1.22 0.5Z" fill="#EA4335"/>
+      <path d="M14.79 14.8L11.44 11.43V11.22V11L14.79 7.63L14.9 7.7L18.87 9.97C20.01 10.61 20.01 11.65 18.87 12.3L14.9 14.57L14.79 14.8Z" fill="#FBBC04"/>
+      <path d="M14.9 14.57L11.44 11.1L1.22 21.5C1.6 21.9 2.21 21.95 2.9 21.56L14.9 14.57Z" fill="#34A853"/>
+      <path d="M14.9 7.7L2.9 0.71C2.21 0.31 1.6 0.37 1.22 0.77L11.44 11.17L14.9 7.7Z" fill="#4285F4"/>
+    </svg>
+    <div class="gplay-badge-text">
+      <span class="gplay-badge-sub">Disponible en</span>
+      <span class="gplay-badge-name">Google Play</span>
+    </div>
+  </a>
 
   <div class="mockup-wrap">
     <div class="mockup">
@@ -300,7 +320,7 @@ footer{padding:40px 32px;display:flex;align-items:center;justify-content:space-b
     <div class="faq-list">
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">¿Necesito instalar una app? <span class="faq-arrow">▾</span></div>
-        <div class="faq-a">No. DIPAG es una Progressive Web App (PWA) que funciona directo desde tu navegador en el celular. Puedes agregarla a tu pantalla de inicio como cualquier app.</div>
+        <div class="faq-a">No necesitas instalar nada desde una tienda para usar la versión web — DIPAG es una Progressive Web App (PWA) que funciona directo desde tu navegador en el celular, y puedes agregarla a tu pantalla de inicio. Si prefieres la app nativa, también está disponible en <a href="https://play.google.com/store/apps/details?id=cl.dipag.dipag" target="_blank" rel="noopener" style="color:var(--green)">Google Play</a> para Android.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona el escaneo con IA? <span class="faq-arrow">▾</span></div>
@@ -352,6 +372,7 @@ footer{padding:40px 32px;display:flex;align-items:center;justify-content:space-b
   <div class="footer-logo"><img src="https://dipag.app/icon-192.png" alt="DIPAG" style="height:36px;border-radius:8px"></div>
   <div class="footer-links">
     <a href="https://dipag.app">App</a>
+    <a href="https://play.google.com/store/apps/details?id=cl.dipag.dipag" target="_blank" rel="noopener">Google Play</a>
     <a href="#planes">Planes</a>
     <a href="#faq">FAQ</a>
     <a href="#contacto">Contacto</a>
