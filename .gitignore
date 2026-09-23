@@ -1,3 +1,5 @@
 config/
 admin_sessions.sql
 *.log
+
+*.sql
