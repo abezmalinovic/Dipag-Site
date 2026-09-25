@@ -204,6 +204,8 @@ function renderSection(name){
 }
 
 function fmt(n){ return Math.round(n||0).toLocaleString('es-CL'); }
+// 25 sep 2026: escapar datos de usuarios (un nombre con HTML se ejecutaba en el panel)
+function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function fmtMoney(n){ return '$'+fmt(n); }
 
 function renderOverview(){
@@ -235,7 +237,7 @@ function renderOverview(){
     <div class="kpi">
       <div class="kpi-label">Boletas este mes</div>
       <div class="kpi-val" style="color:var(--blue)">${fmt(s.boletas_mes)}</div>
-      <div class="kpi-sub">${fmt(s.boletas_ocr_mes)} OCR · ${fmt(s.boletas_manual_mes)} manuales</div>
+      <div class="kpi-sub">${fmt(s.boletas_ocr_mes)} OCR · ${fmt(s.boletas_manual_mes)} manuales${s.uso_interno ? ' · +'+fmt(s.uso_interno.boletas_mes)+' internas' : ''}</div>
       <div class="kpi-trend up">↑ activo</div>
       <div class="kpi-accent" style="background:var(--blue)"></div>
     </div>
@@ -280,8 +282,8 @@ function renderOverview(){
         <tbody>
           ${(statsData.usuarios_recientes||[]).slice(0,8).map(u=>`
           <tr>
-            <td>${u.nombre||'—'}<br><span style="font-size:11px;color:var(--muted)">${u.email}</span></td>
-            <td><span class="plan-badge ${u.plan}">${u.plan}</span></td>
+            <td>${esc(u.nombre)||'—'}<br><span style="font-size:11px;color:var(--muted)">${esc(u.email)}</span></td>
+            <td><span class="plan-badge ${u.plan==='premium'?'premium':'free'}">${u.plan==='premium'?'premium':'free'}</span></td>
             <td style="color:var(--muted)">${u.total_boletas||0}</td>
             <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
           </tr>`).join('')}
@@ -309,15 +311,14 @@ function renderUsuarios(){
   <div class="card">
     <div class="card-title">Todos los usuarios <span class="card-badge">${fmt(s.total_usuarios)} total</span></div>
     <table class="table">
-      <thead><tr><th>Nombre</th><th>Email</th><th>Plan</th><th>Boletas</th><th>Grupos</th><th>Registro</th></tr></thead>
+      <thead><tr><th>Nombre</th><th>Email</th><th>Plan</th><th>Boletas</th><th>Registro</th></tr></thead>
       <tbody>
         ${(statsData.usuarios_recientes||[]).map(u=>`
         <tr>
-          <td style="font-weight:500">${u.nombre||'—'}</td>
-          <td style="color:var(--muted);font-size:12px">${u.email}</td>
-          <td><span class="plan-badge ${u.plan}">${u.plan}</span></td>
+          <td style="font-weight:500">${esc(u.nombre)||'—'}</td>
+          <td style="color:var(--muted);font-size:12px">${esc(u.email)}</td>
+          <td><span class="plan-badge ${u.plan==='premium'?'premium':'free'}">${u.plan==='premium'?'premium':'free'}</span></td>
           <td style="color:var(--muted)">${u.total_boletas||0}</td>
-          <td style="color:var(--muted)">${u.total_grupos||0}</td>
           <td style="color:var(--muted);font-size:12px">${fmtDate(u.created_at)}</td>
         </tr>`).join('')}
       </tbody>
@@ -367,23 +368,24 @@ function renderIngresos(){
 
 function renderAPI(){
   const s = statsData;
-  const costoEstimado = (s.boletas_ocr_mes||0) * 0.01;
+  const ocrTotal = s.ocr_mes_total ?? s.boletas_ocr_mes ?? 0; // costo real: incluye cuentas internas
+  const costoEstimado = ocrTotal * 0.01;
   return `
   <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
-    <div class="kpi"><div class="kpi-label">Llamadas OCR este mes</div><div class="kpi-val" style="color:var(--blue)">${fmt(s.boletas_ocr_mes)}</div><div class="kpi-sub">a Anthropic Claude</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
+    <div class="kpi"><div class="kpi-label">Llamadas OCR este mes</div><div class="kpi-val" style="color:var(--blue)">${fmt(ocrTotal)}</div><div class="kpi-sub">a Anthropic Claude (incluye internas)</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
     <div class="kpi"><div class="kpi-label">Costo estimado API</div><div class="kpi-val" style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</div><div class="kpi-sub">$0.01 por llamada aprox.</div><div class="kpi-accent" style="background:var(--orange)"></div></div>
     <div class="kpi"><div class="kpi-label">Total OCR histórico</div><div class="kpi-val">${fmt(s.total_ocr||s.boletas_ocr_mes)}</div><div class="kpi-sub">desde el inicio</div><div class="kpi-accent" style="background:var(--purple)"></div></div>
   </div>
   <div class="card">
     <div class="card-title">Uso de API Anthropic (Claude Sonnet)</div>
     <div style="margin-bottom:20px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Llamadas OCR este mes</span><span style="color:var(--green)">${fmt(s.boletas_ocr_mes)} / ilimitado</span></div>
-      <div class="api-meter"><div class="api-fill" style="width:${Math.min(100,(s.boletas_ocr_mes||0)/100*100)}%"></div></div>
-      <div class="api-row"><span>Modelo: claude-sonnet-4-5</span><span>~$0.01 USD/llamada</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Llamadas OCR este mes</span><span style="color:var(--green)">${fmt(ocrTotal)} (${fmt(s.boletas_ocr_mes)} de clientes)</span></div>
+      <div class="api-meter"><div class="api-fill" style="width:${Math.min(100,ocrTotal/100*100)}%"></div></div>
+      <div class="api-row"><span>Modelo: claude-sonnet-4-6</span><span>~$0.01 USD/llamada</span></div>
     </div>
     <div style="background:var(--bg3);border-radius:10px;padding:16px;font-size:13px">
       <div style="font-weight:500;margin-bottom:10px">Costo estimado mensual</div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(s.boletas_ocr_mes)} llamadas × $0.01)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(ocrTotal)} llamadas × $0.01)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
       <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:500">Total estimado</span><span style="color:var(--orange);font-family:'Geist',sans-serif;font-weight:700">~USD ${costoEstimado.toFixed(2)}</span></div>
     </div>
   </div>`;
@@ -419,7 +421,7 @@ function renderCharts(){
 function renderCostos(){
   const s = statsData;
   const mrr = (s.premium_activos||0)*1990;
-  const costoOCR = (s.boletas_ocr_mes||0) * 0.01 * 950; // USD a CLP aprox
+  const costoOCR = (s.ocr_mes_total ?? s.boletas_ocr_mes ?? 0) * 0.01 * 950; // USD a CLP aprox (incluye internas: es costo real)
 
   // Costos fijos mensuales en CLP
   const COSTOS = [

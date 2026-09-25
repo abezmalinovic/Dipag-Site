@@ -9,8 +9,8 @@ header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if($_SERVER['REQUEST_METHOD']==='OPTIONS'){http_response_code(200);exit;}
 
-// Emails excluidos del conteo y listado
-define('DEMO_EMAILS', ['demo@dipag.app', 'demo_premium@dipag.app']);
+// 25 sep 2026: cuentas internas por id (mismas que stats.php y el cron de vencimientos)
+const CUENTAS_INTERNAS = [2, 3, 5, 9];
 
 function verificarAdmin($db){
     $auth  = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
@@ -34,10 +34,10 @@ try {
     $offset = (int)($_GET['offset'] ?? 0);
     $plan   = $_GET['plan'] ?? '';
 
-    // Excluir demos siempre
-    $demoPlaceholders = implode(',', array_fill(0, count(DEMO_EMAILS), '?'));
-    $whereBase = "WHERE u.email NOT IN ($demoPlaceholders)";
-    $params = DEMO_EMAILS;
+    // Excluir cuentas internas siempre
+    $in = implode(',', array_map('intval', CUENTAS_INTERNAS));
+    $whereBase = "WHERE u.id NOT IN ($in)";
+    $params = [];
 
     if($plan){
         $whereBase .= " AND u.plan=?";
@@ -48,13 +48,11 @@ try {
         SELECT
             u.id, u.nombre, u.email, u.plan, u.created_at,
             COUNT(DISTINCT b.id) as total_boletas,
-            COUNT(DISTINCT g.id) as total_grupos,
             MAX(b.created_at)    as ultima_boleta,
             s.estado             as suscripcion_estado,
             s.vencimiento        as suscripcion_vence
         FROM usuarios u
         LEFT JOIN boletas b ON b.usuario_id = u.id
-        LEFT JOIN grupos g ON g.usuario_id = u.id
         LEFT JOIN suscripciones s ON s.usuario_id = u.id AND s.estado='activa'
         $whereBase
         GROUP BY u.id
@@ -78,5 +76,5 @@ try {
 
 } catch(Exception $e){
     http_response_code(500);
-    echo json_encode(['error'=>'Error interno: '.$e->getMessage()]);
+    echo json_encode(['error'=>'Error interno']);
 }
