@@ -101,6 +101,16 @@ body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;min-h
 .api-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--green),rgba(200,255,0,0.5))}
 .api-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:16px}
 
+/* EMBUDO (v1.1) */
+.fn-row{display:grid;grid-template-columns:170px 1fr 120px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.fn-row:last-child{border-bottom:none}
+.fn-track{background:var(--bg3);border-radius:6px;height:22px;overflow:hidden}
+.fn-fill{height:100%;background:linear-gradient(90deg,rgba(200,255,0,.55),rgba(200,255,0,.25));border-radius:6px;min-width:2px}
+.fn-num{text-align:right;font-family:'Geist',sans-serif;font-weight:700}
+.fn-num small{color:var(--muted);font-weight:400;font-size:11px;margin-left:4px}
+.dias-sel{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:8px;font-size:12px;font-family:'Geist',sans-serif}
+.nota{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.5}
+
 /* LOADER */
 .loading{text-align:center;padding:40px;color:var(--muted);font-size:13px}
 .spinner{width:24px;height:24px;border:2px solid var(--bg3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
@@ -124,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;min-h
     <a class="sb-item active" onclick="showSection('overview')"><span class="sb-item-icon">📊</span>Overview</a>
     <a class="sb-item" onclick="showSection('usuarios')"><span class="sb-item-icon">👥</span>Usuarios</a>
     <a class="sb-item" onclick="showSection('boletas')"><span class="sb-item-icon">📄</span>Boletas</a>
+    <a class="sb-item" onclick="showSection('embudo')"><span class="sb-item-icon">🔻</span>Embudo</a>
     <a class="sb-item" onclick="showSection('ingresos')"><span class="sb-item-icon">💰</span>Ingresos</a>
     <a class="sb-item" onclick="showSection('api')"><span class="sb-item-icon">🤖</span>Uso de API</a>
     <a class="sb-item" onclick="showSection('costos')"><span class="sb-item-icon">🧾</span>Costos</a>
@@ -154,6 +165,8 @@ if(!token) window.location.href = '/admin/';
 
 let statsData = {};
 let currentSection = 'overview';
+let embudoData = null;
+let embudoDias = 30;
 
 async function fetchStats(){
   const r = await fetch('/api/admin/stats.php', {
@@ -170,12 +183,24 @@ async function fetchUsuarios(){
   return await r.json();
 }
 
+async function cargarEmbudo(){
+  embudoData = null;
+  if(currentSection==='embudo') renderSection('embudo');
+  try{
+    const r = await fetch('/api/admin/embudo.php?dias='+embudoDias, {headers:{'Authorization':'Bearer '+token}});
+    if(r.status===401){ logout(); return; }
+    embudoData = await r.json();
+  }catch(e){ embudoData = {error:true}; }
+  if(currentSection==='embudo') renderSection('embudo');
+}
+
 async function loadAll(){
   document.getElementById('last-update').textContent = 'Actualizando...';
   try{
     const [stats, usuarios] = await Promise.all([fetchStats(), fetchUsuarios()]);
     statsData = {...stats, usuarios_recientes: usuarios?.usuarios || []};
     renderSection(currentSection);
+    if(currentSection==='embudo') cargarEmbudo();
     const now = new Date();
     document.getElementById('last-update').textContent = 'Actualizado '+now.toLocaleTimeString('es-CL');
   } catch(e){
@@ -187,9 +212,10 @@ function showSection(name){
   currentSection = name;
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
   event.currentTarget.classList.add('active');
-  const titles = {overview:'Overview',usuarios:'Usuarios',boletas:'Boletas',ingresos:'Ingresos',api:'Uso de API',costos:'Costos Operacionales'};
+  const titles = {overview:'Overview',usuarios:'Usuarios',boletas:'Boletas',ingresos:'Ingresos',api:'Uso de API',costos:'Costos Operacionales',embudo:'Embudo de uso'};
   document.getElementById('section-title').textContent = titles[name];
   renderSection(name);
+  if(name==='embudo') cargarEmbudo();
 }
 
 function renderSection(name){
@@ -200,6 +226,7 @@ function renderSection(name){
   else if(name==='ingresos') el.innerHTML = renderIngresos();
   else if(name==='api') el.innerHTML = renderAPI();
   else if(name==='costos') el.innerHTML = renderCostos();
+  else if(name==='embudo') el.innerHTML = renderEmbudo();
   renderCharts();
 }
 
@@ -388,6 +415,94 @@ function renderAPI(){
       <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">OCR (${fmt(ocrTotal)} llamadas × $0.01)</span><span style="color:var(--orange)">~USD ${costoEstimado.toFixed(2)}</span></div>
       <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:500">Total estimado</span><span style="color:var(--orange);font-family:'Geist',sans-serif;font-weight:700">~USD ${costoEstimado.toFixed(2)}</span></div>
     </div>
+  </div>`;
+}
+
+
+function renderEmbudo(){
+  const d = embudoData;
+  const sel = `<select class="dias-sel" onchange="embudoDias=parseInt(this.value);cargarEmbudo()">${[7,30,90].map(n=>`<option value="${n}"${n===embudoDias?' selected':''}>Últimos ${n} días</option>`).join('')}</select>`;
+  if(!d) return '<div class="loading"><div class="spinner"></div>Cargando embudo...</div>';
+  if(d.error) return '<div class="loading">No se pudo cargar el embudo. <button onclick="cargarEmbudo()" style="color:var(--green);background:none;border:none;cursor:pointer">Reintentar</button></div>';
+  if(d.sin_tabla) return '<div class="card"><div class="card-title">Embudo</div><div style="color:var(--muted);font-size:13px">Aún no existe la tabla de eventos en la base de datos.</div></div>';
+  const n = v => fmt(v||0);
+  const pct = (a,b) => b>0 ? Math.round(a/b*100) : 0;
+  const E = d.embudo||{}, X = d.escaneos||{}, V = d.conversion||{}, S = d.salidas||{}, A = d.abandono||{};
+  const base = E.ver_items||0;
+  const pasos = [
+    ['Abrieron una cuenta (ítems)','ver_items'],
+    ['Agregaron comensales','ver_comensales'],
+    ['Llegaron a asignar','ver_asignar'],
+    ['Vieron el resumen','ver_resumen'],
+    ['Cuenta guardada/completada','cuenta_completada']
+  ];
+  let prev = base;
+  const filasEmbudo = pasos.map(([lbl,k])=>{
+    const v = E[k]||0, w = base>0 ? Math.min(100,Math.round(v/base*100)) : 0;
+    const paso = `${pct(v,prev)}% del paso anterior`; prev = v;
+    return `<div class="fn-row"><span>${esc(lbl)}</span><div class="fn-track" title="${esc(paso)}"><div class="fn-fill" style="width:${w}%"></div></div><span class="fn-num">${n(v)}<small>${pct(v,base)}%</small></span></div>`;
+  }).join('');
+  const filaAband = [['Se quedaron en ítems','ver_items'],['En comensales','ver_comensales'],['En asignar','ver_asignar'],['En el resumen (sin guardar)','ver_resumen']]
+    .map(([l,k])=>`<div class="ingreso-row"><span class="ingreso-label">${esc(l)}</span><span class="ingreso-amount" style="color:var(--orange)">${n(A[k])}</span></div>`).join('');
+  const salidasLbl = {terminar_cuenta:'Guardar en historial',compartir_pdf:'Exportar PDF',compartir_wa:'WhatsApp (links)',compartir_resumen_wa:'Resumen por WhatsApp',compartir_link_comensal:'Link por comensal',recomendar_app:'Recomendar DIPAG'};
+  const filaSal = Object.keys(salidasLbl).map(k=>`<div class="ingreso-row"><span class="ingreso-label">${esc(salidasLbl[k])}</span><span class="ingreso-amount">${n(S[k])}</span></div>`).join('');
+  const dias = d.por_dia||[];
+  const maxU = Math.max(1,...dias.map(x=>x.usuarios||0));
+  const barras = dias.length ? dias.map(x=>`<div class="bar-wrap"><div class="bar-val">${x.usuarios||0}</div><div class="bar" style="height:${Math.max(4,(x.usuarios||0)/maxU*100)}%" title="${x.cuentas||0} cuentas iniciadas"></div><div class="bar-label">${esc(x.dia)}</div></div>`).join('') : '<div style="color:var(--muted);font-size:12px;padding:20px">Sin datos</div>';
+  const okEsc = pct(X.ok,X.inicio);
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <span style="font-size:12px;color:var(--muted)">${n(d.total_eventos)} eventos registrados${d.desde_utc?' desde el '+esc(fmtDate(d.desde_utc)):''} · cuentas internas excluidas</span>${sel}
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Cuentas iniciadas</div><div class="kpi-val" style="color:var(--blue)">${n(d.iniciadas)}</div><div class="kpi-sub">${n(d.por_origen&&d.por_origen.escaneo)} escaneo · ${n(d.por_origen&&d.por_origen.manual)} manual</div><div class="kpi-accent" style="background:var(--blue)"></div></div>
+    <div class="kpi"><div class="kpi-label">Llegan al final</div><div class="kpi-val" style="color:var(--green)">${pct(E.cuenta_completada,base)}%</div><div class="kpi-sub">${n(E.cuenta_completada)} de ${n(base)} cuentas abiertas</div><div class="kpi-accent" style="background:var(--green)"></div></div>
+    <div class="kpi"><div class="kpi-label">Usuarios activos</div><div class="kpi-val">${n(d.activos)}</div><div class="kpi-sub">${n(d.vuelven)} volvieron en 2+ días</div><div class="kpi-accent" style="background:var(--purple)"></div></div>
+    <div class="kpi"><div class="kpi-label">Escaneos exitosos</div><div class="kpi-val" style="color:${X.inicio? (okEsc>=80?'var(--green)':'var(--orange)') : 'var(--muted)'}">${X.inicio? okEsc+'%' : '—'}</div><div class="kpi-sub">${n(X.ok)} ok de ${n(X.inicio)} intentos</div><div class="kpi-accent" style="background:var(--orange)"></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title">Embudo del flujo <span class="card-badge">cuentas distintas · % sobre las que abrieron ítems</span></div>
+    ${filasEmbudo}
+    <div class="nota">Cada cuenta es una boleta en curso (un mismo usuario puede tener varias). Pasa el mouse sobre una barra para ver el % respecto al paso anterior.</div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Dónde abandonan <span class="card-badge">última pantalla, cuentas sin guardar</span></div>
+      ${filaAband}
+    </div>
+    <div class="card">
+      <div class="card-title">Cómo cierran y comparten <span class="card-badge">cuentas distintas</span></div>
+      ${filaSal}
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Escaneos (OCR) <span class="card-badge">eventos</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Intentos</span><span class="ingreso-amount" style="color:var(--text)">${n(X.inicio)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Detectó ítems</span><span class="ingreso-amount">${n(X.ok)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Sin ítems (pasa a manual)</span><span class="ingreso-amount" style="color:var(--orange)">${n(X.sin_items)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Errores</span><span class="ingreso-amount" style="color:var(--orange)">${n(X.error)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">&nbsp;&nbsp;· sin conexión</span><span style="color:var(--muted)">${n(X.errores&&X.errores.red)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">&nbsp;&nbsp;· límite diario</span><span style="color:var(--muted)">${n(X.errores&&X.errores.limite_diario)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">&nbsp;&nbsp;· lectura/servidor</span><span style="color:var(--muted)">${n(X.errores&&(X.errores.ocr+X.errores.otro))}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Conversión a Premium <span class="card-badge">usuarios distintos</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Vieron un pop-up de upgrade</span><span class="ingreso-amount" style="color:var(--text)">${n(V.upgrade_popup)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">&nbsp;&nbsp;· pop-ups por escaneo / por PDF</span><span style="color:var(--muted)">${n(d.popups&&d.popups.escaneo)} / ${n(d.popups&&d.popups.pdf)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Abrieron la pantalla Premium</span><span class="ingreso-amount" style="color:var(--text)">${n(V.ver_premium)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Tocaron "Activar Premium"</span><span class="ingreso-amount">${n(V.premium_pago_inicio)}</span></div>
+      <div class="ingreso-row"><span class="ingreso-label">Fueron a Mercado Pago</span><span class="ingreso-amount">${n(V.premium_redirige_mp)}</span></div>
+      <div class="nota">Los pagos confirmados se ven en Usuarios/Ingresos (suscripciones activas).</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Usuarios activos por día <span class="card-badge">últimos 14 días · hora Chile</span></div>
+    <div class="chart-bars" style="height:140px">${barras}</div>
   </div>`;
 }
 
@@ -680,6 +795,6 @@ function logout(){
 loadAll();
 setInterval(loadAll, 5*60*1000);
 </script>
-<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:rgba(255,255,255,0.2);font-family:monospace">DIPAG Admin © 2026 v1.0</div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:rgba(255,255,255,0.2);font-family:monospace">DIPAG Admin © 2026 v1.1</div>
 </body>
 </html>
